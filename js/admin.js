@@ -74,7 +74,7 @@ const lines = v => v.split('\n').map(s => s.trim()).filter(Boolean);
 
 /* ---------- Remplir / lire le formulaire ---------- */
 function fill(c) {
-  for (const k of ['name', 'title', 'tagline', 'birth', 'about', 'address', 'email', 'whatsapp']) form.elements[k].value = c[k] || '';
+  for (const k of ['name', 'title', 'tagline', 'travel', 'birth', 'about', 'address', 'email', 'whatsapp']) form.elements[k].value = c[k] || '';
   form.elements.phones.value = c.phones.join('\n');
   form.elements.skills.value = c.skills.join('\n');
   form.elements.interests.value = c.interests.join('\n');
@@ -87,7 +87,7 @@ function fill(c) {
 function read() {
   const v = k => form.elements[k].value.trim();
   return {
-    name: v('name'), title: v('title'), tagline: v('tagline'), birth: v('birth'), about: v('about'),
+    name: v('name'), title: v('title'), tagline: v('tagline'), travel: v('travel'), birth: v('birth'), about: v('about'),
     address: v('address'), email: v('email'), whatsapp: v('whatsapp').replace(/\D/g, ''),
     phones: lines(v('phones')),
     skills: lines(v('skills')),

@@ -59,6 +59,7 @@ function definition(c, photo) {
     { text: c.title, color: GREEN, bold: true, fontSize: 10.5, margin: [0, 6, 0, 0] },
     ...mainTitle('Profil'),
     { text: c.about, fontSize: 9.5, lineHeight: 1.25 },
+    c.travel ? { text: c.travel, fontSize: 9.5, bold: true, color: GREEN, margin: [0, 6, 0, 0] } : '',
     ...mainTitle('Expérience professionnelle'),
     ...(c.experiences || []).flatMap(e => [
       { text: e.title, bold: true, fontSize: 10, margin: [0, 6, 0, 1] },

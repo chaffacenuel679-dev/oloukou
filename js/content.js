@@ -13,6 +13,7 @@ export const DEFAULT_CONTENT = {
     "(Programme Alimentaire Mondial) à Lokossa et à Cotonou : gestion de stocks, logistique, " +
     "coordination de projets, suivi-évaluation, statistiques et mobilisation de ressources. " +
     "Aujourd'hui, je mets cette expérience à votre service à travers Prestalia.",
+  travel: 'Je me déplace pour réaliser mes prestations : partout au Bénin et au-delà, selon vos besoins.',
   birth: 'Né vers 1967 à Savè (Département des Collines)',
   address: 'Agnivèdji, Lokossa, Bénin',
   phones: ['0197900204', '0195235215', '0148928307'],
