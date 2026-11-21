@@ -13,7 +13,7 @@
 <body>
   <header class="topbar">
     <div class="wrap topbar-in">
-      <a class="logo" href="#accueil"><span class="logo-mark"><svg class="logo-gear" viewBox="-50 -50 100 100" aria-hidden="true"></svg><b>P</b></span>Prestalia</a>
+      <a class="logo" href="#accueil"><span class="logo-mark">P<i></i></span>Prestalia</a>
       <nav class="nav" aria-label="Navigation principale">
         <a href="#services">Services</a>
         <a href="#apropos">À propos</a>
@@ -37,8 +37,21 @@
           </div>
         </div>
         <div class="hero-visual" data-reveal="zoom">
-          <svg id="gears" viewBox="0 0 440 440" aria-hidden="true"></svg>
+          <div class="orbit-ring"></div>
+          <ul class="orbit">
+            <li style="--a:0deg" title="Logistique"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg><small>Logistique</small></span></li>
+            <li style="--a:60deg" title="Administration"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h10l4 4v12H4z"/><path d="M14 4v4h4M8 13l2 2 4-4"/></svg><small>Administration</small></span></li>
+            <li style="--a:120deg" title="Données"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 17v-4M12 17V9M17 17V6"/><path d="M5 11l5-4 3 2 6-5"/></svg><small>Données</small></span></li>
+            <li style="--a:180deg" title="Projets"><span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M9 7V5h6v2M3 12h18"/></svg><small>Projets</small></span></li>
+            <li style="--a:240deg" title="Partenariats"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2.5 19c.5-3.5 3-5 5.5-5s5 1.5 5.5 5M14 14.5c2.5-.5 6 .5 7 4"/></svg><small>Partenariats</small></span></li>
+            <li style="--a:300deg" title="Commerce"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9M4 9h16v11H4zM4 9c0 1.7 1.3 3 3 3s3-1.3 3-3c0 1.7 1.3 3 3 3s3-1.3 3-3c0 1.7 1.3 3 3 3"/><path d="M10 20v-4h4v4"/></svg><small>Commerce</small></span></li>
+          </ul>
           <img class="hero-photo" data-photo src="assets/photo.jpg" alt="Photo de Laurent OLOUKOU" width="200" height="200">
+          <div class="growth" aria-hidden="true">
+            <svg viewBox="0 0 120 60"><path class="g-bar" d="M12 54V40"/><path class="g-bar" d="M32 54V32"/><path class="g-bar" d="M52 54V26"/><path class="g-bar" d="M72 54V18"/><path class="g-line" d="M8 44 30 34 50 30 72 16 104 6"/><path class="g-arrow" d="M94 5h11v10"/></svg>
+            <span>Croissance</span>
+          </div>
+          <div class="deal" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M9 7V5h6v2M3 12h18"/></svg><span>Prestation<br><b>réussie ✔</b></span></div>
         </div>
       </div>
     </section>

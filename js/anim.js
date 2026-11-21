@@ -1,13 +1,5 @@
-// Animations du site public : engrenages, apparition au défilement, compteurs, parcours.
-import { mountGears, reduced } from './gears.js';
-
-/* 1. Engrenages de l'accueil : la photo est au centre de la grande roue bleue. */
-mountGears(document.getElementById('gears'), [
-  { n: 24, m: 10, x: 180, y: 240, color: '#1d4f91', hole: 90 },
-  { n: 12, m: 10, parent: 0, angle: -45, color: '#2e8b57' },
-  { n: 8, m: 10, parent: 0, angle: 120, color: '#c8102e' },
-  { n: 6, m: 10, parent: 1, angle: 35, color: '#8fb3dc' }
-]);
+// Animations du site public : apparition au défilement, compteurs, parcours.
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function start() {
   /* 2. Apparition des blocs quand ils entrent à l'écran */

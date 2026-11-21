@@ -40,10 +40,9 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 .topbar { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid var(--line); }
 .topbar-in { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
 .logo { display: flex; align-items: center; gap: .5em; font-weight: 700; font-size: 1.25rem; color: var(--blue); text-decoration: none; }
-.logo-mark { position: relative; display: grid; place-items: center; width: 36px; height: 36px; color: var(--blue); }
-.logo-mark b { position: relative; color: #fff; font-size: .95rem; }
-.logo-gear { position: absolute; inset: 0; width: 100%; height: 100%; animation: spin 12s linear infinite; }
-.logo:hover .logo-gear { animation-duration: 2s; color: var(--green); }
+.logo-mark { position: relative; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: var(--blue); color: #fff; overflow: hidden; transition: transform .3s; }
+.logo-mark i { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: var(--green); transform-origin: left; animation: fill 3s ease-in-out infinite alternate; }
+.logo:hover .logo-mark { transform: rotate(-8deg) scale(1.08); }
 .nav { display: flex; align-items: center; gap: 20px; }
 .nav a:not(.btn) { color: var(--ink); text-decoration: none; font-weight: 700; font-size: .95rem; }
 .nav a:not(.btn):hover { color: var(--blue); }
@@ -118,6 +117,10 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 
 /* ================= Animations ================= */
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float { 50% { transform: translateY(-10px); } }
+@keyframes fill { from { transform: scaleX(.25); } to { transform: scaleX(1); } }
+@keyframes draw { 0% { stroke-dashoffset: 140; } 60%, 100% { stroke-dashoffset: 0; } }
+@keyframes draw-arrow { 0%, 45% { stroke-dashoffset: 30; } 70%, 100% { stroke-dashoffset: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 @keyframes shine { from { left: -60%; } to { left: 130%; } }
 
@@ -132,8 +135,31 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 .hero-text > :nth-child(4) { animation-delay: .3s; }
 .hero-text > :nth-child(5) { animation-delay: .4s; }
 .hero-visual { position: relative; width: 420px; aspect-ratio: 1; }
-.hero-visual svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 8px 16px rgba(29, 79, 145, .2)); }
-.hero-photo { position: absolute; left: 40.9%; top: 54.5%; width: 40.9%; height: 40.9%; transform: translate(-50%, -50%); object-fit: cover; border-radius: 50%; border: 5px solid #fff; }
+.orbit-ring { position: absolute; inset: 9%; border: 2px dashed #b9cde4; border-radius: 50%; animation: spin 60s linear infinite; }
+/* Les icônes tournent autour de la photo en restant droites : on fait varier l'angle --t */
+@property --t { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+@keyframes orbit { to { --t: 360deg; } }
+.orbit { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; animation: orbit 40s linear infinite; }
+.orbit li { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform: rotate(calc(var(--a) + var(--t))) translateY(calc(-1 * var(--R, 172px))) rotate(calc(-1 * (var(--a) + var(--t)))); }
+.orbit li span { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; box-shadow: 0 6px 18px rgba(29, 79, 145, .18); transition: transform .3s; }
+.orbit li span:hover { transform: translate(-50%, -50%) scale(1.15); }
+.orbit li:nth-child(3n+1) span { color: var(--blue); }
+.orbit li:nth-child(3n+2) span { color: var(--green); }
+.orbit li:nth-child(3n) span { color: var(--red); }
+.orbit svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.orbit small { position: absolute; top: 100%; margin-top: 4px; font-size: .7rem; font-weight: 700; color: var(--ink); background: #fff; padding: 0 .5em; border-radius: 999px; white-space: nowrap; opacity: 0; transition: opacity .3s; }
+.hero-visual:hover .orbit, .hero-visual:hover .orbit-ring { animation-play-state: paused; }
+.hero-visual:hover .orbit small { opacity: 1; }
+.growth, .deal { position: absolute; background: #fff; border-radius: 12px; box-shadow: 0 10px 24px rgba(29, 79, 145, .18); font-size: .75rem; font-weight: 700; animation: float 4s ease-in-out infinite; }
+.growth { z-index: 2; left: -8%; bottom: -3%; width: 140px; padding: 10px 12px 6px; color: var(--muted); }
+.growth svg { display: block; width: 100%; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.g-bar { stroke: var(--blue-soft); stroke-width: 12; }
+.g-line, .g-arrow { stroke: var(--green); stroke-width: 3; stroke-dasharray: 140; stroke-dashoffset: 140; animation: draw 3.5s ease-out infinite; }
+.g-arrow { stroke-dasharray: 30; stroke-dashoffset: 30; animation-name: draw-arrow; }
+.deal { z-index: 2; right: -6%; top: -2%; display: flex; align-items: center; gap: 8px; padding: 8px 12px; color: var(--ink); animation-delay: -2s; }
+.deal svg { width: 26px; height: 26px; fill: none; stroke: var(--red); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.deal b { color: var(--green); }
+.hero-photo { position: absolute; left: 50%; top: 50%; width: 46%; height: 46%; box-shadow: 0 10px 30px rgba(29, 79, 145, .25); transform: translate(-50%, -50%); object-fit: cover; border-radius: 50%; border: 5px solid #fff; }
 
 /* Chiffres clés */
 .stats { background: var(--blue); color: #fff; padding: 28px 0; }
@@ -177,7 +203,10 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 }
 
 @media (max-width: 800px) {
-  .hero-visual { order: -1; width: min(320px, 100%); margin-inline: auto; }
+  .hero-visual { order: -1; width: min(300px, 80vw); margin: 0 auto 24px; --R: min(126px, 33vw); }
+  .orbit li span { width: 48px; height: 48px; }
+  .orbit svg { width: 22px; height: 22px; }
+  .growth { width: 110px; }
   .stats-in { grid-template-columns: 1fr 1fr; }
 }
 main { overflow-x: clip; }
