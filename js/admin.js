@@ -4,7 +4,7 @@ import { isConfigured, getDb, getAuth, ADMIN_EMAIL } from './firebase.js';
 
 const $ = s => document.querySelector(s);
 const form = $('#editor');
-let content, photo, newPhoto = null;
+let content, photo, newPhoto = null, dirty = false;
 
 /* ---------- Onglets ---------- */
 document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
@@ -35,7 +35,7 @@ function renderList(key, list) {
       <div class="item-tools">
         <button type="button" data-move="-1" title="Monter">↑</button>
         <button type="button" data-move="1" title="Descendre">↓</button>
-        <button type="button" class="del" data-del>Supprimer</button>
+        <button type="button" class="del" data-del>🗑️ Supprimer</button>
       </div>
       ${TEMPLATES[key](item)}
     </div>`).join('');
@@ -51,6 +51,7 @@ function readList(key) {
 
 form.addEventListener('click', ev => {
   const item = ev.target.closest('.item');
+  if (ev.target.dataset.add || ev.target.dataset.move || ev.target.hasAttribute('data-del')) dirty = true;
   if (ev.target.dataset.add) {
     const key = ev.target.dataset.add;
     // Une nouvelle expérience est la plus récente : elle va en haut. Un service va à la fin.
@@ -116,29 +117,33 @@ $('#photo-input').addEventListener('change', async ev => {
     cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
     newPhoto = cv.toDataURL('image/jpeg', 0.85);
     $('#photo-preview').src = newPhoto;
-    status('Nouvelle photo prête : cliquez sur « Enregistrer ».');
+    status('📷 Nouvelle photo prête : cliquez sur « 💾 Enregistrer ».');
   } catch { alert("Ce fichier n'est pas une image lisible."); }
 });
 
 /* ---------- Enregistrement ---------- */
 function status(msg, cls = '') { const s = $('#save-status'); s.textContent = msg; s.className = cls; }
 
+// Avertit si on quitte la page avec des modifications non enregistrées
+form.addEventListener('input', () => { dirty = true; });
+addEventListener('beforeunload', ev => { if (dirty || newPhoto) { ev.preventDefault(); ev.returnValue = ''; } });
+
 form.addEventListener('submit', async ev => {
   ev.preventDefault();
-  if (!isConfigured) return status('Mode démo : configurez Firebase pour enregistrer.', 'err');
+  if (!isConfigured) return status('⚠️ Mode démo : configurez Firebase pour enregistrer.', 'err');
   const data = read();
-  if (!data.name) return status('Le nom est obligatoire.', 'err');
+  if (!data.name) return status('⚠️ Le nom est obligatoire.', 'err');
   const btn = form.querySelector('[type=submit]');
   if (btn.disabled) return;
   btn.disabled = true;
-  status('Enregistrement…');
+  status('⏳ Enregistrement…');
   try {
     const { db, fs } = await getDb();
     await fs.setDoc(fs.doc(db, 'site', 'content'), { ...data, updatedAt: fs.serverTimestamp() });
     if (newPhoto) { await fs.setDoc(fs.doc(db, 'site', 'photo'), { data: newPhoto }); photo = newPhoto; newPhoto = null; }
-    content = data;
-    status('✔ Modifications enregistrées. Elles sont visibles sur le site.', 'ok');
-  } catch (e) { console.error(e); status(`Échec : ${e.code === 'permission-denied' ? "ce compte n'a pas le droit d'enregistrer" : e.message}`, 'err'); }
+    content = data; dirty = false;
+    status('✅ Modifications enregistrées : elles sont visibles sur le site et dans le CV.', 'ok');
+  } catch (e) { console.error(e); status(`❌ Échec : ${e.code === 'permission-denied' ? "ce compte n'a pas le droit d'enregistrer" : e.message}`, 'err'); }
   finally { btn.disabled = false; }
 });
 
@@ -150,7 +155,7 @@ $('#cv-preview').addEventListener('click', async () => {
 async function loadMessages() {
   const box = $('#messages');
   if (!isConfigured) { box.innerHTML = '<p class="muted">Les messages apparaîtront ici une fois Firebase configuré.</p>'; return; }
-  box.textContent = 'Chargement…';
+  box.textContent = '⏳ Chargement…';
   let snap;
   try {
     const { db, fs } = await getDb();
@@ -168,10 +173,10 @@ async function loadMessages() {
       <div><a href="mailto:${esc(m.email)}">${esc(m.email)}</a>${m.phone ? ` · <a href="tel:${esc(m.phone)}">${esc(m.phone)}</a>` : ''}</div>
       <p>${esc(m.message)}</p>
       <div class="item-tools">
-        ${m.read ? '' : '<button type="button" data-read>Marquer comme lu</button>'}
-        <button type="button" class="del" data-delmsg>Supprimer</button>
+        ${m.read ? '' : '<button type="button" data-read>✔ Marquer comme lu</button>'}
+        <button type="button" class="del" data-delmsg>🗑️ Supprimer</button>
       </div>
-    </article>`).join('') : '<p class="muted">Aucun message pour le moment.</p>';
+    </article>`).join('') : '<p class="muted">📭 Aucun message pour le moment.</p>';
 }
 const updateBadge = n => { $('#unread').hidden = !n; $('#unread').textContent = n; };
 
@@ -238,7 +243,7 @@ if (!isConfigured) {
       } else {
         $('#app').hidden = true;
         $('#login').hidden = false;
-        if (user) { alert("Ce compte n'est pas autorisé."); authMod.signOut(auth); }
+        if (user) { alert("⛔ Ce compte n'est pas autorisé. Connectez-vous avec " + ADMIN_EMAIL + '.'); authMod.signOut(auth); }
       }
     });
   } catch (e) {

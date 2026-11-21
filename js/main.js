@@ -7,6 +7,17 @@ import { isConfigured, getDb } from './firebase.js';
 const $ = s => document.querySelector(s);
 let c, photo, lastJson = '';
 
+// Emojis choisis d'après le texte (fonctionne aussi pour les services ajoutés depuis l'admin)
+const pick = (text, table, fallback) => (table.find(([re]) => re.test(text.toLowerCase())) || [, fallback])[1];
+const serviceEmoji = t => pick(t, [[/stock|logisti|transport/, '📦'], [/administ|patrimoine|bureau/, '🗂️'], [/projet|suivi|évaluation/, '📊'],
+  [/donnée|statisti|enquête|analyse/, '📈'], [/ressource|partenari|financ/, '🤝'], [/commerce|vente|boutique/, '🛒'], [/formation|conseil/, '💡']], '✨');
+const interestEmoji = t => pick(t, [[/agricult/, '🌱'], [/commerce/, '🛒'], [/associa/, '🤝'], [/voyage/, '✈️'], [/sport|foot/, '⚽'], [/lecture|livre/, '📚'], [/musique/, '🎵']], '⭐');
+const stars = level => {
+  const l = String(level || '').toLowerCase();
+  const n = /excellent|courant|maternel|natif/.test(l) ? 5 : /très bien|tres bien/.test(l) ? 4 : /assez/.test(l) ? 3 : /bien/.test(l) ? 4 : /moyen|passable/.test(l) ? 2 : /notion|débutant/.test(l) ? 1 : 3;
+  return '★'.repeat(n) + '☆'.repeat(5 - n);
+};
+
 function render(data) {
   const json = JSON.stringify(data);
   if (json === lastJson) return false; // rien n'a changé : on ne touche pas au DOM
@@ -27,20 +38,20 @@ function render(data) {
 
   $('#services-list').innerHTML = c.services.map((s, i) => `
     <article class="card service" data-reveal style="--d:${(i % 3) * 120}ms">
-      <span class="num">${String(i + 1).padStart(2, '0')}</span>
+      <div class="service-head"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="service-emo" aria-hidden="true">${serviceEmoji(s.title)}</span></div>
       <h3>${esc(s.title)}</h3>
       <p>${esc(s.text)}</p>
     </article>`).join('');
 
-  $('#skills').innerHTML = c.skills.map(s => `<li>${esc(s)}</li>`).join('');
-  $('#interests').innerHTML = c.interests.map(s => `<li>${esc(s)}</li>`).join('');
-  $('#languages').innerHTML = c.languages.map(l => `<li><span>${esc(l.name)}</span><span>${esc(l.level)}</span></li>`).join('');
+  $('#skills').innerHTML = c.skills.map(s => `<li>✔ ${esc(s)}</li>`).join('');
+  $('#interests').innerHTML = c.interests.map(s => `<li>${interestEmoji(s)} ${esc(s)}</li>`).join('');
+  $('#languages').innerHTML = c.languages.map(l => `<li><span>🗣️ ${esc(l.name)}</span><span><span class="stars" aria-hidden="true">${stars(l.level)}</span> ${esc(l.level)}</span></li>`).join('');
 
   $('#experiences').innerHTML = c.experiences.filter(e => !e.cvOnly).map(e => `
     <li data-reveal="right">
-      <p class="period">${esc(e.period)}</p>
+      <p class="period">📅 ${esc(e.period)}</p>
       <h3>${esc(e.title)}</h3>
-      <p class="org">${esc([e.org, e.place].filter(Boolean).join(' — '))}</p>
+      <p class="org">🏢 ${esc([e.org, e.place].filter(Boolean).join(' — '))}</p>
       ${e.tasks?.length ? `<ul>${e.tasks.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
     </li>`).join('');
 
@@ -72,7 +83,7 @@ fetchContent().then(data => {
 // Téléchargement du CV (le générateur PDF n'est chargé qu'au clic)
 document.querySelectorAll('[data-cv]').forEach(btn => btn.addEventListener('click', async () => {
   const label = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Préparation du CV…';
+  btn.disabled = true; btn.textContent = '⏳ Préparation du CV…';
   try { const { downloadCv } = await import('./cv.js'); await downloadCv(c, photo); }
   catch (e) { alert(e.message); }
   finally { btn.disabled = false; btn.textContent = label; }
@@ -92,12 +103,12 @@ form.addEventListener('submit', async ev => {
     return;
   }
   // Mêmes contrôles que firestore.rules, pour un message d'erreur clair.
-  if (!d.name.trim()) return setStatus('Indiquez votre nom.', 'err');
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email.trim())) return setStatus('Adresse email invalide.', 'err');
-  if (d.message.trim().length < 5) return setStatus('Votre message est trop court.', 'err');
-  if (!navigator.onLine) return setStatus("Pas de connexion Internet. Réessayez, ou écrivez sur WhatsApp.", 'err');
+  if (!d.name.trim()) return setStatus('⚠️ Indiquez votre nom.', 'err');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email.trim())) return setStatus('⚠️ Adresse email invalide.', 'err');
+  if (d.message.trim().length < 5) return setStatus('⚠️ Votre message est trop court.', 'err');
+  if (!navigator.onLine) return setStatus("📡 Pas de connexion Internet. Réessayez, ou écrivez sur WhatsApp.", 'err');
   const btn = form.querySelector('button');
-  btn.disabled = true; setStatus('Envoi…');
+  btn.disabled = true; setStatus('⏳ Envoi…');
   try {
     const { db, fs } = await getDb();
     await fs.addDoc(fs.collection(db, 'messages'), {
@@ -106,10 +117,10 @@ form.addEventListener('submit', async ev => {
       createdAt: fs.serverTimestamp(), read: false
     });
     form.reset();
-    setStatus('Merci ! Votre message a bien été envoyé.', 'ok');
+    setStatus('✅ Merci ! Votre message a bien été envoyé. Je vous réponds très vite.', 'ok');
   } catch (e) {
     console.error(e);
-    setStatus("L'envoi a échoué. Appelez-moi ou écrivez sur WhatsApp.", 'err');
+    setStatus("❌ L'envoi a échoué. Appelez-moi ou écrivez sur WhatsApp.", 'err');
   } finally { btn.disabled = false; }
 });
 

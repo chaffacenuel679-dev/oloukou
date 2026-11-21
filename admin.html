@@ -28,34 +28,38 @@
 
     <section id="login" class="card login" hidden>
       <h1 class="h2">Espace administrateur</h1>
-      <p>Connectez-vous avec le compte Google autorisé pour modifier le site.</p>
-      <button id="login-btn" class="btn btn-red">Se connecter avec Google</button>
+      <p>🔐 Connectez-vous avec le compte Google autorisé pour modifier le site.</p>
+      <p class="hint">💡 Utilisez le compte <b>oloukoulau@gmail.com</b>. Si rien ne s'ouvre, autorisez les fenêtres pop-up pour ce site, ou réessayez : la connexion passera par une redirection.</p>
+      <button id="login-btn" class="btn btn-red">🔑 Se connecter avec Google</button>
     </section>
 
     <div id="app" hidden>
+      <p class="hint">👋 Bienvenue ! Choisissez un onglet, modifiez les textes, puis cliquez sur <b>💾 Enregistrer</b> en bas de l'écran. Les changements apparaissent aussitôt sur le site et dans le CV.</p>
       <nav class="tabs" role="tablist">
-        <button data-tab="profil" class="active">Profil & contact</button>
-        <button data-tab="services">Services</button>
-        <button data-tab="parcours">Parcours</button>
-        <button data-tab="atouts">Compétences & langues</button>
-        <button data-tab="messages">Messages <span id="unread" class="badge" hidden></span></button>
+        <button data-tab="profil" class="active">👤 Profil & contact</button>
+        <button data-tab="services">🧰 Services</button>
+        <button data-tab="parcours">🧭 Parcours</button>
+        <button data-tab="atouts">🛠️ Compétences & langues</button>
+        <button data-tab="messages">📬 Messages <span id="unread" class="badge" hidden></span></button>
       </nav>
 
       <form id="editor">
         <section data-panel="profil" class="panel card">
-          <h2>Photo</h2>
+          <h2>📷 Photo</h2>
+          <p class="hint">💡 Choisissez une photo nette, de face, avec un fond simple. Elle est réduite automatiquement. Pensez à <b>Enregistrer</b> après l'avoir changée.</p>
           <div class="photo-row">
             <img id="photo-preview" src="assets/photo.jpg" alt="Photo actuelle" width="120" height="144">
             <div><p class="muted" style="margin:0 0 8px">Cette photo est utilisée sur le site et sur le CV.</p><label class="btn btn-outline btn-sm">📷 Changer la photo<input id="photo-input" type="file" accept="image/*" hidden></label></div>
           </div>
-          <h2>Identité</h2>
+          <h2>🪪 Identité</h2>
           <label>Nom<input name="name"></label>
           <label>Métier / accroche principale<input name="title"></label>
           <label>Phrase d'accueil<input name="tagline"></label>
           <label>Déplacements (phrase affichée dans « Services »)<input name="travel"></label>
           <label>Naissance / origine<input name="birth"></label>
           <label>Présentation<textarea name="about" rows="6"></textarea></label>
-          <h2>Contact</h2>
+          <h2>📞 Contact</h2>
+          <p class="hint">💡 Écrivez les téléphones sans le +229 (ex. 0197900204), un par ligne. Pour WhatsApp, mettez le numéro complet avec l'indicatif, sans espace.</p>
           <label>Adresse<input name="address"></label>
           <label>Téléphones (un par ligne)<textarea name="phones" rows="3"></textarea></label>
           <label>Email<input name="email" type="email"></label>
@@ -63,34 +67,38 @@
         </section>
 
         <section data-panel="services" class="panel card" hidden>
-          <h2>Services proposés</h2>
+          <h2>🧰 Services proposés</h2>
+          <p class="hint">💡 Un titre court et une description de 1 à 2 phrases. Un emoji est choisi automatiquement selon le titre (📦 stock, 📊 projet, 🛒 commerce…). Utilisez ↑ ↓ pour changer l'ordre.</p>
           <div id="services-ed" class="items"></div>
           <button type="button" class="btn btn-outline btn-sm" data-add="services">➕ Ajouter un service</button>
         </section>
 
         <section data-panel="parcours" class="panel card" hidden>
-          <h2>Expériences (de la plus récente à la plus ancienne)</h2>
+          <h2>💼 Expériences (de la plus récente à la plus ancienne)</h2>
+          <p class="hint">💡 Cliquez sur <b>➕ Ajouter une expérience</b> : un bloc vide apparaît en haut. Remplissez la période sous la forme « 2015 – 2018 ». Une tâche par ligne. Cochez « seulement dans le CV » pour la cacher sur le site.</p>
           <div id="experiences-ed" class="items"></div>
           <button type="button" class="btn btn-outline btn-sm" data-add="experiences">➕ Ajouter une expérience (en haut de la liste)</button>
         </section>
 
         <section data-panel="atouts" class="panel card" hidden>
-          <h2>Compétences</h2>
+          <p class="hint">💡 Une ligne = un élément. Pour les langues, le niveau donne les étoiles sur le site et les points sur le CV : Excellent ★★★★★, Bien ★★★★, Assez bien ★★★, Moyen ★★, Notions ★.</p>
+          <h2>🛠️ Compétences</h2>
           <label>Une compétence par ligne<textarea name="skills" rows="8"></textarea></label>
-          <h2>Langues</h2>
+          <h2>🌍 Langues</h2>
           <label>Une langue par ligne, au format « Langue — Niveau »<textarea name="languages" rows="6"></textarea></label>
-          <h2>Centres d'intérêt</h2>
+          <h2>⭐ Centres d'intérêt</h2>
           <label>Un par ligne<textarea name="interests" rows="5"></textarea></label>
         </section>
 
         <section data-panel="messages" class="panel card" hidden>
-          <h2>Messages reçus</h2>
+          <h2>📬 Messages reçus</h2>
+          <p class="hint">💡 Les nouveaux messages ont une bordure rouge. Cliquez sur l'email ou le téléphone pour répondre directement, puis sur <b>Marquer comme lu</b>.</p>
           <div id="messages"></div>
         </section>
 
         <div class="savebar">
           <button type="button" id="cv-preview" class="btn btn-outline">📄 Télécharger le CV à jour</button>
-          <button type="submit" class="btn btn-red">Enregistrer les modifications</button>
+          <button type="submit" class="btn btn-red">💾 Enregistrer les modifications</button>
           <span id="save-status" role="status"></span>
         </div>
       </form>
