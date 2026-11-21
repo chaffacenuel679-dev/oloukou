@@ -113,3 +113,4 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
   .hero-photo { width: 200px; height: 240px; order: -1; }
   .hero, .section { padding: 44px 0; }
 }
+.slogan { font-size: 1.1rem; font-style: italic; color: var(--green); font-weight: 700; }

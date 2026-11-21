@@ -7,7 +7,7 @@ export const BRAND = 'Prestalia';
 export const DEFAULT_CONTENT = {
   name: 'Laurent OLOUKOU',
   title: 'Prestataire de services en gestion, logistique et suivi de projets',
-  tagline: "Plus de 30 ans d'expérience au service des organisations, des entreprises et des communautés.",
+  tagline: 'Un prestataire de services, de près comme de loin.',
   about:
     "De nationalité béninoise et originaire de Savè, j'ai travaillé de 1994 à 2018 avec le PAM " +
     "(Programme Alimentaire Mondial) à Lokossa et à Cotonou : gestion de stocks, logistique, " +
