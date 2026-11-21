@@ -6,6 +6,8 @@
   <meta name="robots" content="noindex">
   <title>Administration — Prestalia</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/admin.css">
   <script type="module" src="js/admin.js"></script>
@@ -44,13 +46,13 @@
           <h2>Photo</h2>
           <div class="photo-row">
             <img id="photo-preview" src="assets/photo.jpg" alt="Photo actuelle" width="120" height="144">
-            <label class="btn btn-outline btn-sm">Changer la photo<input id="photo-input" type="file" accept="image/*" hidden></label>
+            <div><p class="muted" style="margin:0 0 8px">Cette photo est utilisée sur le site et sur le CV.</p><label class="btn btn-outline btn-sm">📷 Changer la photo<input id="photo-input" type="file" accept="image/*" hidden></label></div>
           </div>
           <h2>Identité</h2>
           <label>Nom<input name="name"></label>
           <label>Métier / accroche principale<input name="title"></label>
           <label>Phrase d'accueil<input name="tagline"></label>
-          <label>Déplacements (phrase affichée dans « Services » et sur le CV)<input name="travel"></label>
+          <label>Déplacements (phrase affichée dans « Services »)<input name="travel"></label>
           <label>Naissance / origine<input name="birth"></label>
           <label>Présentation<textarea name="about" rows="6"></textarea></label>
           <h2>Contact</h2>
@@ -63,13 +65,13 @@
         <section data-panel="services" class="panel card" hidden>
           <h2>Services proposés</h2>
           <div id="services-ed" class="items"></div>
-          <button type="button" class="btn btn-outline btn-sm" data-add="services">+ Ajouter un service</button>
+          <button type="button" class="btn btn-outline btn-sm" data-add="services">➕ Ajouter un service</button>
         </section>
 
         <section data-panel="parcours" class="panel card" hidden>
           <h2>Expériences (de la plus récente à la plus ancienne)</h2>
           <div id="experiences-ed" class="items"></div>
-          <button type="button" class="btn btn-outline btn-sm" data-add="experiences">+ Ajouter une expérience</button>
+          <button type="button" class="btn btn-outline btn-sm" data-add="experiences">➕ Ajouter une expérience (en haut de la liste)</button>
         </section>
 
         <section data-panel="atouts" class="panel card" hidden>
@@ -87,7 +89,7 @@
         </section>
 
         <div class="savebar">
-          <button type="button" id="cv-preview" class="btn btn-outline">Télécharger le CV (aperçu)</button>
+          <button type="button" id="cv-preview" class="btn btn-outline">📄 Télécharger le CV à jour</button>
           <button type="submit" class="btn btn-red">Enregistrer les modifications</button>
           <span id="save-status" role="status"></span>
         </div>

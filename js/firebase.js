@@ -6,13 +6,17 @@ export const isConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.proj
 export { ADMIN_EMAIL };
 
 let appP, fsP, authP;
-const getApp = () => (appP ??= import(`${CDN}/firebase-app.js`).then(m => m.getApps()[0] || m.initializeApp(firebaseConfig)));
+// En cas d'échec réseau, on oublie la promesse pour pouvoir réessayer plus tard.
+const getApp = () => (appP ??= import(`${CDN}/firebase-app.js`)
+  .then(m => m.getApps()[0] || m.initializeApp(firebaseConfig))
+  .catch(e => { appP = null; throw e; }));
 
 /** { db, fs } — Firestore Lite (léger, suffisant pour lire/écrire des documents). */
 export function getDb() {
   if (!isConfigured) return Promise.reject(new Error('Firebase non configuré'));
   return (fsP ??= Promise.all([getApp(), import(`${CDN}/firebase-firestore-lite.js`)])
-    .then(([app, fs]) => ({ db: fs.getFirestore(app), fs })));
+    .then(([app, fs]) => ({ db: fs.getFirestore(app), fs }))
+    .catch(e => { fsP = null; throw e; }));
 }
 
 /** { auth, authMod } — utilisé seulement par l'administration. */
@@ -21,7 +25,7 @@ export function getAuth() {
     const auth = authMod.getAuth(app);
     auth.languageCode = 'fr';
     return { auth, authMod };
-  }));
+  }).catch(e => { authP = null; throw e; }));
 }
 
 /** N'accepte que des images en data URL (évite l'injection de liens). */

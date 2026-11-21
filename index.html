@@ -6,7 +6,16 @@
   <title>Prestalia — Laurent OLOUKOU, prestations de services</title>
   <meta name="description" content="Prestalia : gestion de stocks, logistique, gestion administrative, suivi de projets et conseil. Laurent OLOUKOU, Lokossa, Bénin.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin-700-normal.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="css/style.css">
+  <script>
+    // Masque les blocs animés seulement si JavaScript tourne ; filet de sécurité :
+    // si les scripts n'ont pas démarré après 3 s, tout s'affiche quand même.
+    document.documentElement.classList.add('js');
+    setTimeout(() => { if (!document.documentElement.dataset.ready) document.documentElement.classList.add('no-anim'); }, 3000);
+  </script>
   <script type="module" src="js/main.js"></script>
   <script type="module" src="js/anim.js"></script>
 </head>
@@ -58,7 +67,7 @@
 
     <section class="stats" aria-label="Chiffres clés">
       <div class="wrap stats-in">
-        <div class="stat" data-reveal><strong data-count="years">30</strong><span>ans d'expérience</span></div>
+        <div class="stat" data-reveal><strong data-count="years">30+</strong><span>ans d'expérience</span></div>
         <div class="stat" data-reveal><strong data-count="services">6</strong><span>domaines de services</span></div>
         <div class="stat" data-reveal><strong data-count="languages">5</strong><span>langues parlées</span></div>
         <div class="stat" data-reveal><strong>2</strong><span>modes : sur place et à distance</span></div>

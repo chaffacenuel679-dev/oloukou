@@ -1,7 +1,6 @@
 // Administration : connexion Google, modification du contenu, photo, messages.
-import { loadContent, esc } from './data.js';
+import { fetchContent, cachedContent, esc } from './data.js';
 import { isConfigured, getDb, getAuth, ADMIN_EMAIL } from './firebase.js';
-import { downloadCv } from './cv.js';
 
 const $ = s => document.querySelector(s);
 const form = $('#editor');
@@ -54,8 +53,13 @@ form.addEventListener('click', ev => {
   const item = ev.target.closest('.item');
   if (ev.target.dataset.add) {
     const key = ev.target.dataset.add;
-    renderList(key, [...readListRaw(key), key === 'services' ? { title: '', text: '' } : { title: '', org: '', place: '', period: '', tasks: [] }]);
-    $(`#${key}-ed`).lastElementChild.querySelector('input').focus();
+    // Une nouvelle expérience est la plus récente : elle va en haut. Un service va à la fin.
+    const blank = key === 'services' ? { title: '', text: '' } : { title: '', org: '', place: '', period: '', tasks: [] };
+    const top = key === 'experiences';
+    renderList(key, top ? [blank, ...readListRaw(key)] : [...readListRaw(key), blank]);
+    const el = top ? $(`#${key}-ed`).firstElementChild : $(`#${key}-ed`).lastElementChild;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.querySelector('input').focus({ preventScroll: true });
   } else if (item && ev.target.hasAttribute('data-del')) {
     if (confirm('Supprimer cet élément ?')) item.remove();
   } else if (item && ev.target.dataset.move) {
@@ -124,6 +128,9 @@ form.addEventListener('submit', async ev => {
   if (!isConfigured) return status('Mode démo : configurez Firebase pour enregistrer.', 'err');
   const data = read();
   if (!data.name) return status('Le nom est obligatoire.', 'err');
+  const btn = form.querySelector('[type=submit]');
+  if (btn.disabled) return;
+  btn.disabled = true;
   status('Enregistrement…');
   try {
     const { db, fs } = await getDb();
@@ -131,11 +138,12 @@ form.addEventListener('submit', async ev => {
     if (newPhoto) { await fs.setDoc(fs.doc(db, 'site', 'photo'), { data: newPhoto }); photo = newPhoto; newPhoto = null; }
     content = data;
     status('✔ Modifications enregistrées. Elles sont visibles sur le site.', 'ok');
-  } catch (e) { console.error(e); status(`Échec : ${e.message}`, 'err'); }
+  } catch (e) { console.error(e); status(`Échec : ${e.code === 'permission-denied' ? "ce compte n'a pas le droit d'enregistrer" : e.message}`, 'err'); }
+  finally { btn.disabled = false; }
 });
 
 $('#cv-preview').addEventListener('click', async () => {
-  try { await downloadCv(read(), newPhoto || photo); } catch (e) { alert(e.message); }
+  try { const { downloadCv } = await import('./cv.js'); await downloadCv(read(), newPhoto || photo); } catch (e) { alert(e.message); }
 });
 
 /* ---------- Messages ---------- */
@@ -143,8 +151,15 @@ async function loadMessages() {
   const box = $('#messages');
   if (!isConfigured) { box.innerHTML = '<p class="muted">Les messages apparaîtront ici une fois Firebase configuré.</p>'; return; }
   box.textContent = 'Chargement…';
-  const { db, fs } = await getDb();
-  const snap = await fs.getDocs(fs.query(fs.collection(db, 'messages'), fs.orderBy('createdAt', 'desc')));
+  let snap;
+  try {
+    const { db, fs } = await getDb();
+    snap = await fs.getDocs(fs.query(fs.collection(db, 'messages'), fs.orderBy('createdAt', 'desc')));
+  } catch (e) {
+    console.error(e);
+    box.innerHTML = `<p class="muted">Impossible de charger les messages (${esc(e.code || e.message)}). Vérifiez la connexion puis rouvrez l'onglet.</p>`;
+    return;
+  }
   const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   updateBadge(list.filter(m => !m.read).length);
   box.innerHTML = list.length ? list.map(m => `
@@ -163,41 +178,71 @@ const updateBadge = n => { $('#unread').hidden = !n; $('#unread').textContent = 
 $('#messages').addEventListener('click', async ev => {
   const art = ev.target.closest('.msg');
   if (!art) return;
-  const { db, fs } = await getDb();
-  const ref = fs.doc(db, 'messages', art.dataset.id);
-  if (ev.target.hasAttribute('data-read')) await fs.updateDoc(ref, { read: true });
-  else if (ev.target.hasAttribute('data-delmsg') && confirm('Supprimer ce message ?')) await fs.deleteDoc(ref);
-  else return;
-  loadMessages();
+  const isRead = ev.target.hasAttribute('data-read');
+  if (!isRead && !(ev.target.hasAttribute('data-delmsg') && confirm('Supprimer ce message ?'))) return;
+  ev.target.disabled = true;
+  try {
+    const { db, fs } = await getDb();
+    const ref = fs.doc(db, 'messages', art.dataset.id);
+    if (isRead) await fs.updateDoc(ref, { read: true }); else await fs.deleteDoc(ref);
+    loadMessages();
+  } catch (e) { console.error(e); ev.target.disabled = false; alert(`Action impossible : ${e.code || e.message}`); }
 });
 
 /* ---------- Démarrage ---------- */
+let opened = false;
 async function openEditor() {
-  ({ content, photo } = await loadContent());
-  fill(content);
+  if (opened) return; // évite d'écraser des modifications en cours
+  opened = true;
   $('#login').hidden = true;
   $('#app').hidden = false;
+  const fresh = await fetchContent();
+  if (!fresh && isConfigured) {
+    showNotice("Lecture du contenu en ligne impossible : la dernière version connue est affichée. Vérifiez la connexion avant d'enregistrer.");
+  }
+  ({ content, photo } = fresh ?? cachedContent());
+  fill(content);
 }
 
+function showNotice(text) { const n = $('#notice'); n.hidden = false; n.textContent = text; }
+const sameEmail = (a, b) => String(a || '').toLowerCase() === String(b || '').toLowerCase();
+
 if (!isConfigured) {
-  const n = $('#notice');
-  n.hidden = false;
-  n.textContent = "Mode démo : Firebase n'est pas encore configuré (js/firebase-config.js). Vous pouvez tester l'éditeur et l'aperçu du CV, mais rien n'est enregistré.";
+  showNotice("Mode démo : Firebase n'est pas encore configuré (js/firebase-config.js). Vous pouvez tester l'éditeur et l'aperçu du CV, mais rien n'est enregistré.");
   openEditor();
 } else {
-  const { auth, authMod } = await getAuth();
-  $('#login-btn').addEventListener('click', () => authMod.signInWithPopup(auth, new authMod.GoogleAuthProvider()).catch(e => alert(e.message)));
-  $('#logout').addEventListener('click', () => authMod.signOut(auth));
-  authMod.onAuthStateChanged(auth, async user => {
-    $('#logout').hidden = !user;
-    $('#who').textContent = user?.email || '';
-    if (user && user.email === ADMIN_EMAIL) {
-      await openEditor();
-      loadMessages().catch(() => {});
-    } else {
-      $('#app').hidden = true;
-      $('#login').hidden = false;
-      if (user) { alert("Ce compte n'est pas autorisé."); authMod.signOut(auth); }
-    }
-  });
+  $('#login').hidden = false;
+  try {
+    const { auth, authMod } = await getAuth();
+    const provider = new authMod.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    // Revient d'une connexion par redirection (mobile / fenêtre bloquée)
+    authMod.getRedirectResult(auth).catch(e => console.warn(e));
+    $('#login-btn').addEventListener('click', async () => {
+      try { await authMod.signInWithPopup(auth, provider); }
+      catch (e) {
+        if (['auth/popup-blocked', 'auth/operation-not-supported-in-this-environment'].includes(e.code)) return authMod.signInWithRedirect(auth, provider);
+        if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') return;
+        if (e.code === 'auth/unauthorized-domain') return alert("Ce domaine n'est pas autorisé dans Firebase (Authentication → Paramètres → Domaines autorisés).");
+        if (e.code === 'auth/network-request-failed') return alert('Pas de connexion Internet.');
+        alert(e.message);
+      }
+    });
+    $('#logout').addEventListener('click', () => authMod.signOut(auth).then(() => location.reload()));
+    authMod.onAuthStateChanged(auth, async user => {
+      $('#logout').hidden = !user;
+      $('#who').textContent = user?.email || '';
+      if (user && sameEmail(user.email, ADMIN_EMAIL)) {
+        await openEditor();
+        loadMessages();
+      } else {
+        $('#app').hidden = true;
+        $('#login').hidden = false;
+        if (user) { alert("Ce compte n'est pas autorisé."); authMod.signOut(auth); }
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    showNotice('Impossible de charger la connexion Firebase. Vérifiez votre connexion Internet puis rechargez la page.');
+  }
 }

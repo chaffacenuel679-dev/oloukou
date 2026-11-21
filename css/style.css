@@ -135,12 +135,15 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 .hero-text > :nth-child(4) { animation-delay: .3s; }
 .hero-text > :nth-child(5) { animation-delay: .4s; }
 .hero-visual { position: relative; width: 420px; aspect-ratio: 1; }
-.orbit-ring { position: absolute; inset: 9%; border: 2px dashed #b9cde4; border-radius: 50%; animation: spin 60s linear infinite; }
-/* Les icônes tournent autour de la photo en restant droites : on fait varier l'angle --t */
-@property --t { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-@keyframes orbit { to { --t: 360deg; } }
-.orbit { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; animation: orbit 40s linear infinite; }
-.orbit li { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform: rotate(calc(var(--a) + var(--t))) translateY(calc(-1 * var(--R, 172px))) rotate(calc(-1 * (var(--a) + var(--t)))); }
+.orbit-ring { position: absolute; inset: 9%; border: 2px dashed #b9cde4; border-radius: 50%; animation: turn 60s linear infinite; will-change: rotate; }
+/* Les icônes tournent autour de la photo en restant droites.
+   Optimisé : seule la propriété « rotate » est animée (gérée par la carte graphique),
+   l'anneau tourne dans un sens et chaque icône dans l'autre. */
+@keyframes turn { to { rotate: 360deg; } }
+@keyframes unturn { to { rotate: -360deg; } }
+.orbit { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; animation: turn 40s linear infinite; will-change: rotate; }
+.orbit li { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform: rotate(var(--a)) translateY(calc(-1 * var(--R, 172px))) rotate(calc(-1 * var(--a))); }
+.orbit li > span { animation: unturn 40s linear infinite; }
 .orbit li span { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; box-shadow: 0 6px 18px rgba(29, 79, 145, .18); transition: transform .3s; }
 .orbit li span:hover { transform: translate(-50%, -50%) scale(1.15); }
 .orbit li:nth-child(3n+1) span { color: var(--blue); }
@@ -148,7 +151,9 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 .orbit li:nth-child(3n) span { color: var(--red); }
 .orbit svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .orbit small { position: absolute; top: 100%; margin-top: 4px; font-size: .7rem; font-weight: 700; color: var(--ink); background: #fff; padding: 0 .5em; border-radius: 999px; white-space: nowrap; opacity: 0; transition: opacity .3s; }
-.hero-visual:hover .orbit, .hero-visual:hover .orbit-ring { animation-play-state: paused; }
+.hero-visual:hover .orbit, .hero-visual:hover .orbit li > span, .hero-visual:hover .orbit-ring { animation-play-state: paused; }
+/* Accueil hors écran : on met en pause toutes les animations en boucle */
+.hero.paused *, .hero.paused *::before, .hero.paused *::after { animation-play-state: paused !important; }
 .hero-visual:hover .orbit small { opacity: 1; }
 .growth, .deal { position: absolute; background: #fff; border-radius: 12px; box-shadow: 0 10px 24px rgba(29, 79, 145, .18); font-size: .75rem; font-weight: 700; animation: float 4s ease-in-out infinite; }
 .growth { z-index: 2; left: -8%; bottom: -3%; width: 140px; padding: 10px 12px 6px; color: var(--muted); }
@@ -170,7 +175,7 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 .stat span { font-size: .9rem; opacity: .9; }
 
 /* Boutons : reflet au survol */
-.btn { position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s, background .2s; }
+.btn { position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s, background-color .2s; }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, .15); }
 .btn::after { content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .45), transparent); transform: skewX(-20deg); pointer-events: none; }
 .btn:hover::after { animation: shine .7s; }
@@ -183,23 +188,23 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 
 /* Titres : la barre rouge s'étire à l'apparition */
 .h2::after { transition: width .8s .2s; }
-.h2[data-reveal]:not(.in)::after { width: 0; }
+html.js .h2[data-reveal]:not(.in)::after { width: 0; }
 
 /* Parcours : la ligne verticale se remplit au défilement */
 .timeline { position: relative; }
-.timeline::before { content: ""; position: absolute; left: -3px; top: 0; width: 3px; height: calc(var(--progress, 0) * 100%); background: linear-gradient(var(--red), var(--green), var(--blue)); }
+.timeline::before { content: ""; position: absolute; left: -3px; top: 0; width: 3px; height: 100%; transform-origin: top; transform: scaleY(var(--progress, 0)); background: linear-gradient(var(--red), var(--green), var(--blue)); }
 .timeline > li::before { transition: transform .3s, background .3s; }
 .timeline > li:hover::before { transform: scale(1.3); background: var(--green); }
 
 /* Apparition au défilement */
-[data-reveal] { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; transition-delay: var(--d, 0ms); }
-[data-reveal="right"] { transform: translateX(40px); }
-[data-reveal="zoom"] { transform: scale(.85); }
-[data-reveal].in { opacity: 1; transform: none; }
+html.js [data-reveal] { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0ms); }
+html.js [data-reveal="right"] { transform: translateX(40px); }
+html.js [data-reveal="zoom"] { transform: scale(.85); }
+html.js [data-reveal].in, html.js.no-anim [data-reveal] { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  [data-reveal] { opacity: 1; transform: none; }
+  html.js [data-reveal], html.js [data-reveal][data-reveal] { opacity: 1; transform: none; }
 }
 
 @media (max-width: 800px) {
