@@ -7,12 +7,12 @@
 // =====================================================================
 
 export const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyAtyuiAYeuPNKDDIC8wPI2N3rt2v_vpDkQ",
+  authDomain: "prestalia-oloukou.firebaseapp.com",
+  projectId: "prestalia-oloukou",
+  storageBucket: "prestalia-oloukou.firebasestorage.app",
+  messagingSenderId: "83386685980",
+  appId: "1:83386685980:web:9aac8e40873c90b24b9dd9"
 };
 
 // Seul ce compte Google peut se connecter à /admin.html.
