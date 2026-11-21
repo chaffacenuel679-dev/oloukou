@@ -34,3 +34,5 @@
 #save-status.err { color: var(--red); }
 
 @media (max-width: 700px) { .row2 { grid-template-columns: 1fr; } }
+.admin label.check { display: flex; align-items: center; gap: 8px; font-weight: 400; }
+.admin label.check input { width: auto; }

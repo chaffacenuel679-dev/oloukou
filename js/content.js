@@ -12,7 +12,6 @@ export const DEFAULT_CONTENT = {
     "De nationalité béninoise et originaire de Savè, j'ai travaillé de 1994 à 2018 avec le PAM " +
     "(Programme Alimentaire Mondial) à Lokossa et à Cotonou : gestion de stocks, logistique, " +
     "coordination de projets, suivi-évaluation, statistiques et mobilisation de ressources. " +
-    "Depuis 2012, je gère un établissement de commerce général à Lokossa. " +
     "Aujourd'hui, je mets cette expérience à votre service à travers Prestalia.",
   birth: 'Né vers 1967 à Savè (Département des Collines)',
   address: 'Agnivèdji, Lokossa, Bénin',
@@ -28,7 +27,7 @@ export const DEFAULT_CONTENT = {
     { title: 'Conseil en commerce général', text: "Accompagnement des commerçants : organisation de la boutique, approvisionnement, gestion des stocks et de la caisse." }
   ],
   experiences: [
-    { title: "Gestionnaire d'un établissement de commerce général", org: 'Ets GBOLA & Fils', place: 'Lokossa', period: "2012 – Aujourd'hui", tasks: [] },
+    { title: "Gestionnaire d'un établissement de commerce général", org: 'Ets GBOLA & Fils', place: 'Lokossa', period: "2012 – Aujourd'hui", tasks: [], cvOnly: true },
     { title: "Chef Matériel de l'Office de Gestion des aides du PAM", org: 'OGP-PAM', place: 'Cotonou', period: '2016 – 2018', tasks: ['Gestion du matériel et des fournitures sur le plan national', "Gestion du patrimoine de l'office"] },
     { title: "Délégué du personnel au sein du Conseil d'Administration de l'office", org: 'OGP-PAM', place: 'Cotonou', period: '2015 – 2018', tasks: ["La défense des intérêts du personnel devant le Conseil d'Administration", "La défense de la gestion optimale des ressources de l'Office"] },
     { title: "Assistant à la Direction des Etudes, de la Mobilisation et de l'Assistance", org: 'OGP-PAM', place: 'Cotonou', period: '2015', tasks: ["Assistance aux travaux d'études, à la rédaction des thématiques de mobilisation de ressources et de recherche de partenaires à l'assistance", "Assistance à la recherche et à la mobilisation des ressources pour l'identification des cibles victimes de catastrophes naturelles"] },

@@ -8,10 +8,14 @@ const { content: c, photo } = await loadContent();
 
 document.querySelectorAll('[data-f]').forEach(el => { el.textContent = c[el.dataset.f] ?? ''; });
 document.querySelectorAll('[data-photo]').forEach(img => { img.src = photo; });
+// Chiffres clés (animés par anim.js)
+const firstYear = Math.min(...c.experiences.map(e => parseInt(e.period, 10)).filter(Boolean));
+const counts = { years: new Date().getFullYear() - (firstYear || 1994), services: c.services.length, languages: c.languages.length };
+document.querySelectorAll('[data-count]').forEach(el => { el.dataset.target = counts[el.dataset.count]; el.textContent = counts[el.dataset.count]; });
 $('#year').textContent = new Date().getFullYear();
 
 $('#services-list').innerHTML = c.services.map((s, i) => `
-  <article class="card service">
+  <article class="card service" data-reveal style="--d:${(i % 3) * 120}ms">
     <span class="num">${String(i + 1).padStart(2, '0')}</span>
     <h3>${esc(s.title)}</h3>
     <p>${esc(s.text)}</p>
@@ -21,8 +25,8 @@ $('#skills').innerHTML = c.skills.map(s => `<li>${esc(s)}</li>`).join('');
 $('#interests').innerHTML = c.interests.map(s => `<li>${esc(s)}</li>`).join('');
 $('#languages').innerHTML = c.languages.map(l => `<li><span>${esc(l.name)}</span><span>${esc(l.level)}</span></li>`).join('');
 
-$('#experiences').innerHTML = c.experiences.map(e => `
-  <li>
+$('#experiences').innerHTML = c.experiences.filter(e => !e.cvOnly).map(e => `
+  <li data-reveal="right">
     <p class="period">${esc(e.period)}</p>
     <h3>${esc(e.title)}</h3>
     <p class="org">${esc([e.org, e.place].filter(Boolean).join(' — '))}</p>
@@ -75,3 +79,7 @@ form.addEventListener('submit', async ev => {
     status.textContent = "L'envoi a échoué. Appelez-moi ou écrivez sur WhatsApp."; status.classList.add('err');
   } finally { btn.disabled = false; }
 });
+
+// Le contenu est en place : anim.js peut lancer les animations.
+document.documentElement.dataset.ready = '1';
+document.dispatchEvent(new Event('content-ready'));

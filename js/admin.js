@@ -26,7 +26,8 @@ const TEMPLATES = {
       <label>Ville<input data-k="place" value="${esc(e.place)}"></label>
       <label>Période<input data-k="period" value="${esc(e.period)}" placeholder="2015 – 2018"></label>
     </div>
-    <label>Tâches (une par ligne)<textarea data-k="tasks" rows="4">${esc((e.tasks || []).join('\n'))}</textarea></label>`
+    <label>Tâches (une par ligne)<textarea data-k="tasks" rows="4">${esc((e.tasks || []).join('\n'))}</textarea></label>
+    <label class="check"><input type="checkbox" data-k="cvOnly" ${e.cvOnly ? 'checked' : ''}> Afficher seulement dans le CV (masqué sur le site)</label>`
 };
 
 function renderList(key, list) {
@@ -44,7 +45,7 @@ function renderList(key, list) {
 function readList(key) {
   return [...$(`#${key}-ed`).children].map(div => {
     const o = {};
-    div.querySelectorAll('[data-k]').forEach(f => { o[f.dataset.k] = f.dataset.k === 'tasks' ? lines(f.value) : f.value.trim(); });
+    div.querySelectorAll('[data-k]').forEach(f => { o[f.dataset.k] = f.type === 'checkbox' ? f.checked : f.dataset.k === 'tasks' ? lines(f.value) : f.value.trim(); });
     return o;
   }).filter(o => o.title);
 }
@@ -65,7 +66,7 @@ form.addEventListener('click', ev => {
 // Comme readList, mais garde les éléments vides (pour l'ajout).
 const readListRaw = key => [...$(`#${key}-ed`).children].map(div => {
   const o = {};
-  div.querySelectorAll('[data-k]').forEach(f => { o[f.dataset.k] = f.dataset.k === 'tasks' ? lines(f.value) : f.value; });
+  div.querySelectorAll('[data-k]').forEach(f => { o[f.dataset.k] = f.type === 'checkbox' ? f.checked : f.dataset.k === 'tasks' ? lines(f.value) : f.value; });
   return o;
 });
 

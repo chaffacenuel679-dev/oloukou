@@ -8,11 +8,12 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/anim.js"></script>
 </head>
 <body>
   <header class="topbar">
     <div class="wrap topbar-in">
-      <a class="logo" href="#accueil"><span class="logo-mark">P</span>Prestalia</a>
+      <a class="logo" href="#accueil"><span class="logo-mark"><svg class="logo-gear" viewBox="-50 -50 100 100" aria-hidden="true"></svg><b>P</b></span>Prestalia</a>
       <nav class="nav" aria-label="Navigation principale">
         <a href="#services">Services</a>
         <a href="#apropos">À propos</a>
@@ -25,7 +26,7 @@
   <main>
     <section id="accueil" class="hero">
       <div class="wrap hero-in">
-        <div>
+        <div class="hero-text">
           <p class="eyebrow">Basé à Lokossa · Interventions sur place et à distance</p>
           <h1 data-f="name">Laurent OLOUKOU</h1>
           <p class="lead" data-f="title"></p>
@@ -35,14 +36,26 @@
             <button type="button" class="btn btn-outline" data-cv>Télécharger le CV</button>
           </div>
         </div>
-        <img class="hero-photo" data-photo src="assets/photo.jpg" alt="Photo de Laurent OLOUKOU" width="260" height="310">
+        <div class="hero-visual" data-reveal="zoom">
+          <svg id="gears" viewBox="0 0 440 440" aria-hidden="true"></svg>
+          <img class="hero-photo" data-photo src="assets/photo.jpg" alt="Photo de Laurent OLOUKOU" width="200" height="200">
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Chiffres clés">
+      <div class="wrap stats-in">
+        <div class="stat" data-reveal><strong data-count="years">30</strong><span>ans d'expérience</span></div>
+        <div class="stat" data-reveal><strong data-count="services">6</strong><span>domaines de services</span></div>
+        <div class="stat" data-reveal><strong data-count="languages">5</strong><span>langues parlées</span></div>
+        <div class="stat" data-reveal><strong>2</strong><span>modes : sur place et à distance</span></div>
       </div>
     </section>
 
     <section id="services" class="section">
       <div class="wrap">
-        <h2 class="h2">Mes services</h2>
-        <p class="intro">Plus de 30 ans d'expérience, mis à votre service sur place ou à distance.</p>
+        <h2 class="h2" data-reveal>Mes services</h2>
+        <p class="intro" data-reveal>Plus de 30 ans d'expérience, mis à votre service sur place ou à distance.</p>
         <div class="grid" id="services-list"></div>
       </div>
     </section>
@@ -50,11 +63,11 @@
     <section id="apropos" class="section alt">
       <div class="wrap about">
         <div>
-          <h2 class="h2">À propos</h2>
+          <h2 class="h2" data-reveal>À propos</h2>
           <p data-f="about"></p>
           <p class="muted" data-f="birth"></p>
         </div>
-        <aside class="facts">
+        <aside class="facts" data-reveal="right">
           <h3>Compétences</h3><ul class="tags" id="skills"></ul>
           <h3>Langues</h3><ul class="langs" id="languages"></ul>
           <h3>Centres d'intérêt</h3><ul class="tags tags-green" id="interests"></ul>
@@ -64,7 +77,7 @@
 
     <section id="parcours" class="section">
       <div class="wrap">
-        <h2 class="h2">Parcours professionnel</h2>
+        <h2 class="h2" data-reveal>Parcours professionnel</h2>
         <ol class="timeline" id="experiences"></ol>
       </div>
     </section>
@@ -72,7 +85,7 @@
     <section id="contact" class="section alt">
       <div class="wrap contact">
         <div>
-          <h2 class="h2">Me contacter</h2>
+          <h2 class="h2" data-reveal>Me contacter</h2>
           <p>Où que vous soyez, décrivez votre besoin : je vous réponds rapidement.</p>
           <ul class="coords">
             <li><strong>Adresse :</strong> <span data-f="address"></span></li>
@@ -81,7 +94,7 @@
           </ul>
           <a id="whatsapp" class="btn btn-green" href="#" target="_blank" rel="noopener">Écrire sur WhatsApp</a>
         </div>
-        <form id="contact-form" class="card form" novalidate>
+        <form id="contact-form" class="card form" novalidate data-reveal="right">
           <label>Nom complet<input name="name" required maxlength="100" autocomplete="name"></label>
           <label>Email<input name="email" type="email" required maxlength="200" autocomplete="email"></label>
           <label>Téléphone (facultatif)<input name="phone" type="tel" maxlength="40" autocomplete="tel"></label>
