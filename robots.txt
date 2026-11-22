@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin
+Disallow: /admin.html
+
+Sitemap: https://oloukou-laurent-prestation.vercel.app/sitemap.xml

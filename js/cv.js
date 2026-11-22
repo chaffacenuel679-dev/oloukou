@@ -84,6 +84,9 @@ function definition(c, photo) {
   };
 }
 
+/** Précharge le générateur PDF (au survol du bouton) pour un téléchargement plus rapide. */
+export function preloadPdf() { loadPdfMake().catch(() => {}); }
+
 /** Génère le CV et lance le téléchargement. */
 export async function downloadCv(content, photoSrc) {
   const pdfMake = await loadPdfMake();

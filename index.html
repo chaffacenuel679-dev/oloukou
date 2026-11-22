@@ -5,12 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Prestalia — Laurent OLOUKOU, prestations de services</title>
   <meta name="description" content="Prestalia : gestion de stocks, logistique, gestion administrative, suivi de projets et conseil. Laurent OLOUKOU, Lokossa, Bénin.">
+  <link rel="canonical" href="https://oloukou-laurent-prestation.vercel.app/">
+  <meta name="theme-color" content="#1d4f91">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="Prestalia">
+  <meta property="og:title" content="Prestalia — Laurent OLOUKOU, prestataire de services">
+  <meta property="og:description" content="Gestion de stocks, logistique, gestion administrative, suivi de projets et conseil. Un prestataire de services, de près comme de loin.">
+  <meta property="og:url" content="https://oloukou-laurent-prestation.vercel.app/">
+  <meta property="og:image" content="https://oloukou-laurent-prestation.vercel.app/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="modulepreload" href="js/data.js">
+  <link rel="modulepreload" href="js/content.js">
+  <link rel="modulepreload" href="js/firebase.js">
   <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Prestalia — Laurent OLOUKOU",
+    "url": "https://oloukou-laurent-prestation.vercel.app/",
+    "image": "https://oloukou-laurent-prestation.vercel.app/assets/og-image.jpg",
+    "description": "Prestations de services : gestion de stocks et logistique, gestion administrative, conception et suivi-évaluation de projets, collecte de données, mobilisation de ressources, conseil en commerce.",
+    "telephone": "+2290197900204",
+    "email": "oloukoulau@gmail.com",
+    "address": { "@type": "PostalAddress", "streetAddress": "Agnivèdji", "addressLocality": "Lokossa", "addressCountry": "BJ" },
+    "areaServed": "Bénin et international",
+    "founder": { "@type": "Person", "name": "Laurent OLOUKOU" }
+  }
+  </script>
   <script type="module" src="js/main.js"></script>
   <script type="module" src="js/anim.js"></script>
 </head>
 <body>
+  <a class="skip" href="#services">Aller au contenu</a>
   <header class="topbar">
     <div class="wrap topbar-in">
       <a class="logo" href="#accueil"><span class="logo-mark">P<i></i></span>Prestalia</a>
@@ -23,7 +59,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="contenu">
     <section id="accueil" class="hero">
       <div class="wrap hero-in">
         <div class="hero-text">

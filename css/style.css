@@ -1,5 +1,5 @@
-@font-face { font-family: Manrope; src: url(../assets/fonts/manrope-latin-400-normal.ttf); font-weight: 400; font-display: swap; }
-@font-face { font-family: Manrope; src: url(../assets/fonts/manrope-latin-700-normal.ttf); font-weight: 700; font-display: swap; }
+@font-face { font-family: Manrope; src: url(../assets/fonts/manrope-400.woff2) format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: Manrope; src: url(../assets/fonts/manrope-700.woff2) format('woff2'); font-weight: 700; font-display: swap; }
 
 :root {
   --blue: #1d4f91;
@@ -183,7 +183,7 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 
 /* Titres : la barre rouge s'étire à l'apparition */
 .h2::after { transition: width .8s .2s; }
-.h2[data-reveal]:not(.in)::after { width: 0; }
+html.js .h2[data-reveal]:not(.in)::after { width: 0; }
 
 /* Parcours : la ligne verticale se remplit au défilement */
 .timeline { position: relative; }
@@ -192,10 +192,10 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 .timeline > li:hover::before { transform: scale(1.3); background: var(--green); }
 
 /* Apparition au défilement */
-[data-reveal] { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; transition-delay: var(--d, 0ms); }
-[data-reveal="right"] { transform: translateX(40px); }
-[data-reveal="zoom"] { transform: scale(.85); }
-[data-reveal].in { opacity: 1; transform: none; }
+html.js [data-reveal] { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; transition-delay: var(--d, 0ms); }
+html.js [data-reveal="right"] { transform: translateX(40px); }
+html.js [data-reveal="zoom"] { transform: scale(.85); }
+html.js [data-reveal].in { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -219,3 +219,8 @@ main { overflow-x: clip; }
 .travel .btn { margin-left: auto; flex: none; }
 @keyframes fly { 50% { transform: translate(6px, -6px) rotate(-6deg); } }
 @media (max-width: 700px) { .travel { flex-direction: column; align-items: flex-start; } .travel .btn { margin-left: 0; } }
+
+/* Accessibilité : focus clavier visible et lien d'évitement */
+:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+.skip { position: absolute; left: 16px; top: -60px; z-index: 20; background: var(--blue); color: #fff; padding: .5em 1em; border-radius: 8px; }
+.skip:focus { top: 12px; }

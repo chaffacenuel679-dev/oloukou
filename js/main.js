@@ -1,48 +1,62 @@
 // Site public : affiche le contenu, télécharge le CV, envoie les messages.
-import { loadContent, esc } from './data.js';
+import { loadContent, esc, readCache, writeCache, defaults } from './data.js';
 import { isConfigured, getDb } from './firebase.js';
-import { downloadCv } from './cv.js';
+import { downloadCv, preloadPdf } from './cv.js';
 
 const $ = s => document.querySelector(s);
-const { content: c, photo } = await loadContent();
+let c, photo;
 
-document.querySelectorAll('[data-f]').forEach(el => { el.textContent = c[el.dataset.f] ?? ''; });
-document.querySelectorAll('[data-photo]').forEach(img => { img.src = photo; });
-// Chiffres clés (animés par anim.js)
-const firstYear = Math.min(...c.experiences.map(e => parseInt(e.period, 10)).filter(Boolean));
-const counts = { years: new Date().getFullYear() - (firstYear || 1994), services: c.services.length, languages: c.languages.length };
-document.querySelectorAll('[data-count]').forEach(el => { el.dataset.target = counts[el.dataset.count]; el.textContent = counts[el.dataset.count]; });
-$('#year').textContent = new Date().getFullYear();
+/** Affiche le contenu dans la page (appelé une ou deux fois : copie locale, puis version à jour). */
+function render(data) {
+  ({ content: c, photo } = data);
 
-$('#services-list').innerHTML = c.services.map((s, i) => `
-  <article class="card service" data-reveal style="--d:${(i % 3) * 120}ms">
-    <span class="num">${String(i + 1).padStart(2, '0')}</span>
-    <h3>${esc(s.title)}</h3>
-    <p>${esc(s.text)}</p>
-  </article>`).join('');
+  document.querySelectorAll('[data-f]').forEach(el => { el.textContent = c[el.dataset.f] ?? ''; });
+  document.querySelectorAll('[data-photo]').forEach(img => { img.src = photo; });
+  // Chiffres clés (animés par anim.js)
+  const firstYear = Math.min(...c.experiences.map(e => parseInt(e.period, 10)).filter(Boolean));
+  const counts = { years: new Date().getFullYear() - (firstYear || 1994), services: c.services.length, languages: c.languages.length };
+  document.querySelectorAll('[data-count]').forEach(el => { el.dataset.target = counts[el.dataset.count]; el.textContent = counts[el.dataset.count]; });
+  $('#year').textContent = new Date().getFullYear();
 
-$('#skills').innerHTML = c.skills.map(s => `<li>${esc(s)}</li>`).join('');
-$('#interests').innerHTML = c.interests.map(s => `<li>${esc(s)}</li>`).join('');
-$('#languages').innerHTML = c.languages.map(l => `<li><span>${esc(l.name)}</span><span>${esc(l.level)}</span></li>`).join('');
+  $('#services-list').innerHTML = c.services.map((s, i) => `
+    <article class="card service" data-reveal style="--d:${(i % 3) * 120}ms">
+      <span class="num">${String(i + 1).padStart(2, '0')}</span>
+      <h3>${esc(s.title)}</h3>
+      <p>${esc(s.text)}</p>
+    </article>`).join('');
 
-$('#experiences').innerHTML = c.experiences.filter(e => !e.cvOnly).map(e => `
-  <li data-reveal="right">
-    <p class="period">${esc(e.period)}</p>
-    <h3>${esc(e.title)}</h3>
-    <p class="org">${esc([e.org, e.place].filter(Boolean).join(' — '))}</p>
-    ${e.tasks?.length ? `<ul>${e.tasks.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
-  </li>`).join('');
+  $('#skills').innerHTML = c.skills.map(s => `<li>${esc(s)}</li>`).join('');
+  $('#interests').innerHTML = c.interests.map(s => `<li>${esc(s)}</li>`).join('');
+  $('#languages').innerHTML = c.languages.map(l => `<li><span>${esc(l.name)}</span><span>${esc(l.level)}</span></li>`).join('');
 
-$('#phones').innerHTML = c.phones.map(p => `<a href="tel:+229${esc(p)}">${esc(p)}</a>`).join(' / ');
-$('#email-link').textContent = c.email;
-$('#email-link').href = `mailto:${c.email}`;
-const wa = String(c.whatsapp || '').replace(/\D/g, '');
-if (wa) $('#whatsapp').href = `https://wa.me/${wa}`; else $('#whatsapp').hidden = true;
+  $('#experiences').innerHTML = c.experiences.filter(e => !e.cvOnly).map(e => `
+    <li data-reveal="right">
+      <p class="period">${esc(e.period)}</p>
+      <h3>${esc(e.title)}</h3>
+      <p class="org">${esc([e.org, e.place].filter(Boolean).join(' — '))}</p>
+      ${e.tasks?.length ? `<ul>${e.tasks.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+    </li>`).join('');
 
-$('#subject').innerHTML = [...c.services.map(s => s.title), 'Autre demande']
-  .map(t => `<option>${esc(t)}</option>`).join('');
+  $('#phones').innerHTML = c.phones.map(p => `<a href="tel:+229${esc(p)}">${esc(p)}</a>`).join(' / ');
+  $('#email-link').textContent = c.email;
+  $('#email-link').href = `mailto:${c.email}`;
+  const wa = String(c.whatsapp || '').replace(/\D/g, '');
+  if (wa) $('#whatsapp').href = `https://wa.me/${wa}`; else $('#whatsapp').hidden = true;
+
+  $('#subject').innerHTML = [...c.services.map(s => s.title), 'Autre demande']
+    .map(t => `<option>${esc(t)}</option>`).join('');
+  // Lors d'une mise à jour, les nouveaux blocs sont affichés directement (sans réanimation).
+  if (document.documentElement.dataset.ready) document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('in'));
+}
+
+const cached = readCache();
+render(cached || defaults());
+// La page est remplie : anim.js peut lancer les animations sans attendre Firebase.
+document.documentElement.dataset.ready = '1';
+document.dispatchEvent(new Event('content-ready'));
 
 // Téléchargement du CV
+document.querySelectorAll('[data-cv]').forEach(btn => btn.addEventListener('pointerenter', preloadPdf, { once: true }));
 document.querySelectorAll('[data-cv]').forEach(btn => btn.addEventListener('click', async () => {
   const label = btn.textContent;
   btn.disabled = true; btn.textContent = 'Préparation du CV…';
@@ -80,6 +94,10 @@ form.addEventListener('submit', async ev => {
   } finally { btn.disabled = false; }
 });
 
-// Le contenu est en place : anim.js peut lancer les animations.
-document.documentElement.dataset.ready = '1';
-document.dispatchEvent(new Event('content-ready'));
+// Version à jour depuis Firebase (en dernier : les boutons fonctionnent déjà pendant le chargement).
+const fresh = await loadContent();
+if (fresh) {
+  // Contenu modifié par l'administrateur depuis la dernière visite : on met la page à jour.
+  if (JSON.stringify(fresh) !== JSON.stringify(cached)) render(fresh);
+  if (isConfigured) writeCache(fresh);
+}
