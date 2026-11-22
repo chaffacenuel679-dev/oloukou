@@ -26,7 +26,6 @@
   <link rel="modulepreload" href="js/content.js">
   <link rel="modulepreload" href="js/firebase.js">
   <link rel="stylesheet" href="css/style.css">
-  <script>document.documentElement.classList.add('js')</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -42,6 +41,12 @@
     "founder": { "@type": "Person", "name": "Laurent OLOUKOU" }
   }
   </script>
+  <script>
+    // Masque les blocs animés seulement si JavaScript tourne ; filet de sécurité :
+    // si les scripts n'ont pas démarré après 3 s, tout s'affiche quand même.
+    document.documentElement.classList.add('js');
+    setTimeout(() => { if (!document.documentElement.dataset.ready) document.documentElement.classList.add('no-anim'); }, 3000);
+  </script>
   <script type="module" src="js/main.js"></script>
   <script type="module" src="js/anim.js"></script>
 </head>
@@ -54,7 +59,7 @@
         <a href="#services">Services</a>
         <a href="#apropos">À propos</a>
         <a href="#parcours">Parcours</a>
-        <a href="#contact" class="btn btn-red btn-sm">Me contacter</a>
+        <a href="#contact" class="btn btn-red btn-sm">✉️ Me contacter</a>
       </nav>
     </div>
   </header>
@@ -63,13 +68,13 @@
     <section id="accueil" class="hero">
       <div class="wrap hero-in">
         <div class="hero-text">
-          <p class="eyebrow">Basé à Lokossa · Se déplace pour vos missions</p>
+          <p class="eyebrow">📍 Basé à Lokossa · 🚗 Se déplace pour vos missions</p>
           <h1 data-f="name">Laurent OLOUKOU</h1>
           <p class="lead" data-f="title"></p>
           <p class="sub slogan" data-f="tagline"></p>
           <div class="actions">
-            <a href="#contact" class="btn btn-red">Demander une prestation</a>
-            <button type="button" class="btn btn-outline" data-cv>Télécharger le CV</button>
+            <a href="#contact" class="btn btn-red">📩 Demander une prestation</a>
+            <button type="button" class="btn btn-outline" data-cv>📄 Télécharger le CV</button>
           </div>
         </div>
         <div class="hero-visual" data-reveal="zoom">
@@ -94,22 +99,22 @@
 
     <section class="stats" aria-label="Chiffres clés">
       <div class="wrap stats-in">
-        <div class="stat" data-reveal><strong data-count="years">30</strong><span>ans d'expérience</span></div>
-        <div class="stat" data-reveal><strong data-count="services">6</strong><span>domaines de services</span></div>
-        <div class="stat" data-reveal><strong data-count="languages">5</strong><span>langues parlées</span></div>
-        <div class="stat" data-reveal><strong>2</strong><span>modes : sur place et à distance</span></div>
+        <div class="stat" data-reveal><span class="stat-ico" aria-hidden="true">⏳</span><strong data-count="years">30+</strong><span>ans d'expérience</span></div>
+        <div class="stat" data-reveal><span class="stat-ico" aria-hidden="true">🧰</span><strong data-count="services">6</strong><span>domaines de services</span></div>
+        <div class="stat" data-reveal><span class="stat-ico" aria-hidden="true">🗣️</span><strong data-count="languages">5</strong><span>langues parlées</span></div>
+        <div class="stat" data-reveal><span class="stat-ico" aria-hidden="true">🌐</span><strong>2</strong><span>modes : sur place et à distance</span></div>
       </div>
     </section>
 
     <section id="services" class="section">
       <div class="wrap">
-        <h2 class="h2" data-reveal>Mes services</h2>
-        <p class="intro" data-reveal>Plus de 30 ans d'expérience, mis à votre service sur place ou à distance.</p>
+        <h2 class="h2" data-reveal><span class="emo" aria-hidden="true">🧰</span> Mes services</h2>
+        <p class="intro" data-reveal>✨ Plus de 30 ans d'expérience, mis à votre service sur place ou à distance.</p>
         <div class="grid" id="services-list"></div>
         <div class="travel" data-reveal>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 16l20-8-4 10-6-3-4 4v-6z"/><path d="M8 13l14-5"/></svg>
-          <div><strong>Mobile pour vos missions</strong><p data-f="travel"></p></div>
-          <a href="#contact" class="btn btn-green btn-sm">Planifier une intervention</a>
+          <div><strong>🚗 Mobile pour vos missions</strong><p data-f="travel"></p></div>
+          <a href="#contact" class="btn btn-green btn-sm">🗓️ Planifier une intervention</a>
         </div>
       </div>
     </section>
@@ -117,21 +122,21 @@
     <section id="apropos" class="section alt">
       <div class="wrap about">
         <div>
-          <h2 class="h2" data-reveal>À propos</h2>
+          <h2 class="h2" data-reveal><span class="emo" aria-hidden="true">👤</span> À propos</h2>
           <p data-f="about"></p>
           <p class="muted" data-f="birth"></p>
         </div>
         <aside class="facts" data-reveal="right">
-          <h3>Compétences</h3><ul class="tags" id="skills"></ul>
-          <h3>Langues</h3><ul class="langs" id="languages"></ul>
-          <h3>Centres d'intérêt</h3><ul class="tags tags-green" id="interests"></ul>
+          <h3>🛠️ Compétences</h3><ul class="tags" id="skills"></ul>
+          <h3>🌍 Langues</h3><ul class="langs" id="languages"></ul>
+          <h3>⭐ Centres d'intérêt</h3><ul class="tags tags-green" id="interests"></ul>
         </aside>
       </div>
     </section>
 
     <section id="parcours" class="section">
       <div class="wrap">
-        <h2 class="h2" data-reveal>Parcours professionnel</h2>
+        <h2 class="h2" data-reveal><span class="emo" aria-hidden="true">🧭</span> Parcours professionnel</h2>
         <ol class="timeline" id="experiences"></ol>
       </div>
     </section>
@@ -139,22 +144,22 @@
     <section id="contact" class="section alt">
       <div class="wrap contact">
         <div>
-          <h2 class="h2" data-reveal>Me contacter</h2>
-          <p>Où que vous soyez, décrivez votre besoin : je vous réponds rapidement.</p>
+          <h2 class="h2" data-reveal><span class="emo" aria-hidden="true">✉️</span> Me contacter</h2>
+          <p>🌍 Où que vous soyez, décrivez votre besoin : je vous réponds rapidement ⚡</p>
           <ul class="coords">
-            <li><strong>Adresse :</strong> <span data-f="address"></span></li>
-            <li><strong>Téléphone :</strong> <span id="phones"></span></li>
-            <li><strong>Email :</strong> <a id="email-link" href="#"></a></li>
+            <li><span class="ico" aria-hidden="true">📍</span><strong>Adresse :</strong> <span data-f="address"></span></li>
+            <li><span class="ico" aria-hidden="true">📞</span><strong>Téléphone :</strong> <span id="phones"></span></li>
+            <li><span class="ico" aria-hidden="true">✉️</span><strong>Email :</strong> <a id="email-link" href="#"></a></li>
           </ul>
-          <a id="whatsapp" class="btn btn-green" href="#" target="_blank" rel="noopener">Écrire sur WhatsApp</a>
+          <a id="whatsapp" class="btn btn-green" href="#" target="_blank" rel="noopener">💬 Écrire sur WhatsApp</a>
         </div>
         <form id="contact-form" class="card form" novalidate data-reveal="right">
-          <label>Nom complet<input name="name" required maxlength="100" autocomplete="name"></label>
-          <label>Email<input name="email" type="email" required maxlength="200" autocomplete="email"></label>
-          <label>Téléphone (facultatif)<input name="phone" type="tel" maxlength="40" autocomplete="tel"></label>
-          <label>Service souhaité<select name="subject" id="subject"></select></label>
-          <label>Votre message<textarea name="message" required minlength="5" maxlength="5000" rows="5"></textarea></label>
-          <button class="btn btn-red" type="submit">Envoyer</button>
+          <label>👤 Nom complet<input name="name" required maxlength="100" autocomplete="name"></label>
+          <label>✉️ Email<input name="email" type="email" required maxlength="200" autocomplete="email"></label>
+          <label>📞 Téléphone (facultatif)<input name="phone" type="tel" maxlength="40" autocomplete="tel"></label>
+          <label>🧰 Service souhaité<select name="subject" id="subject"></select></label>
+          <label>📝 Votre message<textarea name="message" required minlength="5" maxlength="5000" rows="5"></textarea></label>
+          <button class="btn btn-red" type="submit">🚀 Envoyer</button>
           <p class="form-status" role="status"></p>
         </form>
       </div>
@@ -162,7 +167,7 @@
   </main>
 
   <footer class="footer">
-    <div class="wrap">© <span id="year"></span> Prestalia — <span data-f="name"></span></div>
+    <div class="wrap">© <span id="year"></span> Prestalia — <span data-f="name"></span> · Fait avec ❤️ au Bénin 🇧🇯</div>
   </footer>
 </body>
 </html>

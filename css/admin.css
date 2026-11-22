@@ -36,3 +36,7 @@
 @media (max-width: 700px) { .row2 { grid-template-columns: 1fr; } }
 .admin label.check { display: flex; align-items: center; gap: 8px; font-weight: 400; }
 .admin label.check input { width: auto; }
+
+/* Petits messages d'aide */
+.hint { background: #eef5ff; border-left: 4px solid var(--blue); border-radius: 8px; padding: 10px 14px; margin: 0 0 14px; font-size: .9rem; color: var(--ink); }
+.login .hint { text-align: left; }
