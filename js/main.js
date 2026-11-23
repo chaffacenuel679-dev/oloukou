@@ -9,8 +9,8 @@ let c, photo, lastJson = '';
 
 // Emojis choisis d'après le texte (fonctionne aussi pour les services ajoutés depuis l'admin)
 const pick = (text, table, fallback) => (table.find(([re]) => re.test(text.toLowerCase())) || [, fallback])[1];
-const serviceEmoji = t => pick(t, [[/stock|logisti|transport/, '📦'], [/administ|patrimoine|bureau/, '🗂️'], [/projet|suivi|évaluation/, '📊'],
-  [/donnée|statisti|enquête|analyse/, '📈'], [/ressource|partenari|financ/, '🤝'], [/commerce|vente|boutique/, '🛒'], [/formation|conseil/, '💡']], '✨');
+const serviceEmoji = t => pick(t, [[/chantier|construct|travaux/, '🏗️'], [/fonci|terrain|parcelle/, '🏡'], [/course|démarche/, '🗂️'],[/stock|logisti|transport/, '📦'], [/administ|patrimoine|bureau/, '🗂️'], [/projet|suivi|évaluation/, '📊'],
+  [/donnée|statisti|enquête|analyse/, '📈'], [/ressource|partenai|partenari|financ/, '🤝'], [/commerce|vente|boutique/, '🛒'], [/formation|conseil/, '💡']], '✨');
 const interestEmoji = t => pick(t, [[/agricult/, '🌱'], [/commerce/, '🛒'], [/associa/, '🤝'], [/voyage/, '✈️'], [/sport|foot/, '⚽'], [/lecture|livre/, '📚'], [/musique/, '🎵']], '⭐');
 const stars = level => {
   const l = String(level || '').toLowerCase();
@@ -42,6 +42,13 @@ function render(data) {
       <h3>${esc(s.title)}</h3>
       <p>${esc(s.text)}</p>
     </article>`).join('');
+
+  const valueEmoji = t => pick(t, [[/confiance/, '🤝'], [/honnête/, '⚖️'], [/discr/, '🤫'], [/rapid/, '⚡']], '💎');
+  const audienceEmoji = t => pick(t, [[/administ|occup/, '💼'], [/extérieur|étranger|diaspora|loin/, '✈️'], [/entreprise|projet|investis/, '🏢']], '👤');
+  $('#audience').innerHTML = (c.audience || []).map((a, i) => `
+    <article class="card who" data-reveal style="--d:${i * 120}ms"><span class="who-emo" aria-hidden="true">${audienceEmoji(a.title)}</span><h4>${esc(a.title)}</h4><p>${esc(a.text)}</p></article>`).join('');
+  $('#values').innerHTML = (c.values || []).map((a, i) => `
+    <div class="value" data-reveal style="--d:${i * 100}ms"><span aria-hidden="true">${valueEmoji(a.title)}</span><strong>${esc(a.title)}</strong><p>${esc(a.text)}</p></div>`).join('');
 
   $('#skills').innerHTML = c.skills.map(s => `<li>✔ ${esc(s)}</li>`).join('');
   $('#interests').innerHTML = c.interests.map(s => `<li>${interestEmoji(s)} ${esc(s)}</li>`).join('');

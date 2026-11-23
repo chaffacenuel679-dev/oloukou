@@ -91,6 +91,7 @@ function definition(c, photo) {
   const main = [
     { text: c.name, fontSize: 24, bold: true, color: NAVY, characterSpacing: .3 },
     { canvas: [{ type: 'rect', x: 0, y: 0, w: 60, h: 4, r: 2, color: AMBER }], margin: [0, 6, 0, 6] },
+    { text: 'Fondateur de Gbola PSD — Prestation de Services à Distance', bold: true, color: NAVY, fontSize: 10.5, margin: [0, 0, 0, 3] },
     c.birth ? { text: [...emo('🎂', MUTED), c.birth], color: MUTED, fontSize: 9.5 } : '',
     ...(c.about ? [mainTitle('👤', 'Profil'), { text: c.about, fontSize: 9.5, lineHeight: 1.3, alignment: 'justify' }] : []),
     ...(c.experiences?.length ? [mainTitle('💼', 'Expérience professionnelle'),

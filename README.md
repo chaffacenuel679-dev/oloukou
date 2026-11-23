@@ -1,4 +1,4 @@
-# Prestalia — site de Laurent OLOUKOU
+# Gbola PSD — site de Laurent OLOUKOU
 
 Site vitrine pour promouvoir les prestations de services de Laurent OLOUKOU
 (gestion de stocks, logistique, gestion administrative, suivi de projets, conseil).

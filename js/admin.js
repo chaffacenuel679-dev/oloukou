@@ -79,8 +79,10 @@ const lines = v => v.split('\n').map(s => s.trim()).filter(Boolean);
 
 /* ---------- Remplir / lire le formulaire ---------- */
 function fill(c) {
-  for (const k of ['name', 'title', 'tagline', 'travel', 'birth', 'about', 'address', 'email', 'whatsapp']) form.elements[k].value = c[k] || '';
+  for (const k of ['name', 'title', 'tagline', 'travel', 'birth', 'about', 'address', 'email', 'whatsapp', 'offer', 'modalities']) form.elements[k].value = c[k] || '';
   form.elements.phones.value = c.phones.join('\n');
+  form.elements.audience.value = (c.audience || []).map(a => `${a.title} — ${a.text}`).join('\n');
+  form.elements.engagements.value = (c.values || []).map(a => `${a.title} — ${a.text}`).join('\n');
   form.elements.skills.value = c.skills.join('\n');
   form.elements.interests.value = c.interests.join('\n');
   form.elements.languages.value = c.languages.map(l => `${l.name} — ${l.level}`).join('\n');
@@ -88,6 +90,12 @@ function fill(c) {
   renderList('experiences', c.experiences);
   $('#photo-preview').src = photo;
 }
+
+// « Titre — description » → { title, text }
+const pairs = txt => lines(txt).map(l => {
+  const [title, ...rest] = l.split(/\s+[—–-]\s+/);
+  return { title: title.trim(), text: rest.join(' — ').trim() };
+});
 
 function read() {
   const v = k => form.elements[k].value.trim();
@@ -101,6 +109,9 @@ function read() {
       const [name, ...rest] = l.split(/\s+[—–-]\s+/);
       return { name: name.trim(), level: rest.join(' — ').trim() };
     }),
+    offer: v('offer'), modalities: v('modalities'),
+    audience: pairs(v('audience')),
+    values: pairs(v('engagements')),
     services: readList('services'),
     experiences: readList('experiences')
   };

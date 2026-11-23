@@ -2,17 +2,32 @@
 // Il s'affiche tant que rien n'a été enregistré depuis la page d'administration.
 // Dès qu'il enregistre, c'est la version stockée dans Firebase qui est utilisée.
 
-export const BRAND = 'Prestalia';
+export const BRAND = 'Gbola PSD';
 
 export const DEFAULT_CONTENT = {
   name: 'Laurent OLOUKOU',
-  title: 'Prestataire de services en gestion, logistique et suivi de projets',
+  title: "Je m'occupe de vos affaires sur place, quand vous ne pouvez pas être là.",
   tagline: 'Un prestataire de services, de près comme de loin.',
   about:
     "De nationalité béninoise et originaire de Savè, j'ai travaillé de 1994 à 2018 avec le PAM " +
     "(Programme Alimentaire Mondial) à Lokossa et à Cotonou : gestion de stocks, logistique, " +
     "coordination de projets, suivi-évaluation, statistiques et mobilisation de ressources. " +
-    "Aujourd'hui, je mets cette expérience à votre service à travers Prestalia.",
+    "Aujourd'hui, je mets cette expérience et mon réseau à votre service à travers Gbola PSD.",
+  offer:
+    "Vous manquez de temps ou vous vivez loin ? Gbola PSD (Prestation de Services à Distance) " +
+    "assure à votre place le suivi de vos réalisations et de vos démarches, et vous tient informé à chaque étape.",
+  audience: [
+    { title: 'Administratifs et personnes très occupées', text: "Votre emploi du temps ne vous laisse pas le temps de vous déplacer ni de suivre vos dossiers." },
+    { title: "Personnes vivant à l'extérieur", text: "Vous êtes hors du Bénin ou loin de Lokossa et vous avez besoin de quelqu'un de confiance sur place." },
+    { title: 'Entreprises et porteurs de projets', text: "Vous cherchez un relais local pour vos chantiers, vos démarches ou vos partenariats." }
+  ],
+  values: [
+    { title: 'Confiance', text: 'Vos affaires sont suivies comme si c\'étaient les miennes.' },
+    { title: 'Honnêteté', text: 'Des comptes rendus clairs et transparents, sans surprise.' },
+    { title: 'Discrétion', text: 'Vos informations et vos projets restent confidentiels.' },
+    { title: 'Rapidité', text: 'Des démarches menées sans perte de temps.' }
+  ],
+  modalities: 'Les modalités (tarif, délais, fréquence des comptes rendus) sont étudiées avec vous, selon chaque situation.',
   travel: 'Je me déplace pour réaliser mes prestations : partout au Bénin et au-delà, selon vos besoins.',
   birth: 'Né vers 1967 à Savè (Département des Collines)',
   address: 'Agnivèdji, Lokossa, Bénin',
@@ -20,12 +35,12 @@ export const DEFAULT_CONTENT = {
   email: 'oloukoulau@gmail.com',
   whatsapp: '2290197900204',
   services: [
-    { title: 'Gestion de stocks et logistique', text: "Réception, stockage, répartition et suivi des marchandises, des vivres et du matériel, du port jusqu'aux entrepôts." },
-    { title: 'Gestion administrative et du patrimoine', text: 'Gestion des biens meubles et immeubles, du matériel et des fournitures, inventaires et organisation administrative.' },
-    { title: 'Conception et suivi-évaluation de projets', text: "Montage de projets, suivi de l'exécution, mesure d'impact et rapports pour les structures et les associations." },
-    { title: 'Collecte et analyse de données', text: 'Enquêtes, collecte de données terrain, statistiques et exploitation des informations pour la décision.' },
-    { title: 'Mobilisation de ressources et partenariats', text: 'Recherche de partenaires, rédaction de dossiers de mobilisation de ressources, animation de partenariats.' },
-    { title: 'Conseil en commerce général', text: "Accompagnement des commerçants : organisation de la boutique, approvisionnement, gestion des stocks et de la caisse." }
+    { title: 'Suivi de chantier', text: "Visites régulières, contrôle de l'avancement et de la qualité des travaux, comptes rendus et photos pour le propriétaire." },
+    { title: 'Courses administratives', text: "Dépôt et retrait de dossiers, suivi des démarches auprès des administrations, mairies et services publics." },
+    { title: "Recherche de partenaires d'affaires", text: "Identification et mise en relation avec des partenaires, fournisseurs ou investisseurs fiables." },
+    { title: 'Sécurisation foncière', text: "Contribution à la sécurisation de terrains et de biens bâtis ou non bâtis : vérifications, démarches et suivi." },
+    { title: 'Gestion de stocks et logistique', text: "Réception, stockage, répartition et suivi des marchandises et du matériel." },
+    { title: 'Suivi et évaluation de projets', text: "Suivi de l'exécution de vos projets, mesure des résultats et rapports réguliers." }
   ],
   experiences: [
     { title: "Gestionnaire d'un établissement de commerce général", org: 'Ets GBOLA & Fils', place: 'Lokossa', period: "2012 – Aujourd'hui", tasks: [], cvOnly: true },

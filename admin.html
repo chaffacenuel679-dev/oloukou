@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Administration — Prestalia</title>
+  <title>Administration — Gbola PSD</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -15,7 +15,7 @@
 <body>
   <header class="topbar">
     <div class="wrap topbar-in">
-      <a class="logo" href="index.html"><span class="logo-mark">P<i></i></span>Prestalia · Admin</a>
+      <a class="logo" href="index.html"><span class="logo-mark">G<i></i></span>Gbola PSD · Admin</a>
       <div class="nav">
         <span id="who" class="muted"></span>
         <button id="logout" class="btn btn-outline btn-sm" hidden>Déconnexion</button>
@@ -37,6 +37,7 @@
       <p class="hint">👋 Bienvenue ! Choisissez un onglet, modifiez les textes, puis cliquez sur <b>💾 Enregistrer</b> en bas de l'écran. Les changements apparaissent aussitôt sur le site et dans le CV.</p>
       <nav class="tabs" role="tablist">
         <button data-tab="profil" class="active">👤 Profil & contact</button>
+        <button data-tab="psd">🤝 Gbola PSD</button>
         <button data-tab="services">🧰 Services</button>
         <button data-tab="parcours">🧭 Parcours</button>
         <button data-tab="atouts">🛠️ Compétences & langues</button>
@@ -64,6 +65,19 @@
           <label>Téléphones (un par ligne)<textarea name="phones" rows="3"></textarea></label>
           <label>Email<input name="email" type="email"></label>
           <label>Numéro WhatsApp (avec indicatif, ex. 2290197900204)<input name="whatsapp"></label>
+        </section>
+
+        <section data-panel="psd" class="panel card" hidden>
+          <h2>🤝 Présentation de Gbola PSD</h2>
+          <p class="hint">💡 Ces textes s'affichent dans la section « Gbola PSD, c'est quoi ? » du site.</p>
+          <label>Présentation de l'offre<textarea name="offer" rows="4"></textarea></label>
+          <label>Modalités (étape 2 « Nous convenons des modalités »)<textarea name="modalities" rows="2"></textarea></label>
+          <h2>👥 Pour qui ?</h2>
+          <p class="hint">💡 Une ligne par type de client, au format « Titre — description ».</p>
+          <label>Clients visés<textarea name="audience" rows="5"></textarea></label>
+          <h2>💎 Engagements</h2>
+          <p class="hint">💡 Une ligne par engagement, au format « Titre — description ».</p>
+          <label>Engagements<textarea name="engagements" rows="5"></textarea></label>
         </section>
 
         <section data-panel="services" class="panel card" hidden>
