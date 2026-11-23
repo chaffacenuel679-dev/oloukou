@@ -1,9 +1,9 @@
 // Chargement de Firebase à la demande (aucun code Firebase n'est chargé si la config est vide).
-import { firebaseConfig, ADMIN_EMAIL } from './firebase-config.js';
+import { firebaseConfig, ADMIN_EMAIL, ADMIN_EMAILS } from './firebase-config.js';
 
 const CDN = 'https://www.gstatic.com/firebasejs/12.19.0';
 export const isConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
-export { ADMIN_EMAIL };
+export { ADMIN_EMAIL, ADMIN_EMAILS };
 
 let appP, fsP, authP;
 // En cas d'échec réseau, on oublie la promesse pour pouvoir réessayer plus tard.

@@ -15,6 +15,7 @@ export const firebaseConfig = {
   appId: "1:83386685980:web:9aac8e40873c90b24b9dd9"
 };
 
-// Seul ce compte Google peut se connecter à /admin.html.
-// ⚠️ Doit être identique à l'email écrit dans firestore.rules.
-export const ADMIN_EMAIL = "oloukoulau@gmail.com";
+// Seuls ces comptes Google peuvent se connecter à /admin.html.
+// ⚠️ Doit correspondre à la liste écrite dans firestore.rules (fonction isAdmin).
+export const ADMIN_EMAILS = ["oloukoulau@gmail.com", "chaffacenuel679@gmail.com"];
+export const ADMIN_EMAIL = ADMIN_EMAILS[0];

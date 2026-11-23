@@ -1,6 +1,6 @@
 // Administration : connexion Google, modification du contenu, photo, messages.
 import { fetchContent, cachedContent, esc } from './data.js';
-import { isConfigured, getDb, getAuth, ADMIN_EMAIL } from './firebase.js';
+import { isConfigured, getDb, getAuth, ADMIN_EMAIL, ADMIN_EMAILS } from './firebase.js';
 
 const $ = s => document.querySelector(s);
 const form = $('#editor');
@@ -248,7 +248,7 @@ if (!isConfigured) {
     authMod.onAuthStateChanged(auth, async user => {
       $('#logout').hidden = !user;
       $('#who').textContent = user?.email || '';
-      if (user && sameEmail(user.email, ADMIN_EMAIL)) {
+      if (user && ADMIN_EMAILS.some(a => sameEmail(user.email, a))) {
         await openEditor();
         loadMessages();
       } else {
