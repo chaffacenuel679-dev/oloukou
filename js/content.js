@@ -6,6 +6,7 @@ export const BRAND = 'Gbola PSD';
 
 export const DEFAULT_CONTENT = {
   name: 'Laurent OLOUKOU',
+  eyebrow: 'Gbola PSD · Prestation de Services à Distance',
   title: "Je m'occupe de vos affaires sur place, quand vous ne pouvez pas être là.",
   tagline: 'Un prestataire de services, de près comme de loin.',
   about:
@@ -27,7 +28,22 @@ export const DEFAULT_CONTENT = {
     { title: 'Discrétion', text: 'Vos informations et vos projets restent confidentiels.' },
     { title: 'Rapidité', text: 'Des démarches menées sans perte de temps.' }
   ],
-  modalities: 'Les modalités (tarif, délais, fréquence des comptes rendus) sont étudiées avec vous, selon chaque situation.',
+  steps: [
+    { title: 'Vous expliquez votre besoin', text: 'Par WhatsApp, téléphone, email ou le formulaire.' },
+    { title: 'Nous convenons des modalités', text: 'Les modalités (tarif, délais, fréquence des comptes rendus) sont étudiées avec vous, selon chaque situation.' },
+    { title: "J'agis sur place, vous êtes informé", text: "Vous suivez l'avancement à distance, en toute sérénité." }
+  ],
+  servicesIntro: "Liste non limitative : si votre besoin n'y figure pas, parlez-m'en.",
+  travelTitle: 'Mobile pour vos missions',
+  contactIntro: 'Où que vous soyez, décrivez votre besoin : je vous réponds rapidement.',
+  // Réglages du CV (onglet « CV » de l'administration)
+  cv: {
+    headline: 'Fondateur de Gbola PSD — Prestation de Services à Distance',
+    summary: '',          // vide = reprend la présentation du site
+    photo: true,
+    services: true,
+    interests: true
+  },
   travel: 'Je me déplace pour réaliser mes prestations : partout au Bénin et au-delà, selon vos besoins.',
   birth: 'Né vers 1967 à Savè (Département des Collines)',
   address: 'Agnivèdji, Lokossa, Bénin',
@@ -63,13 +79,28 @@ export const DEFAULT_CONTENT = {
   interests: ['Agriculture', 'Commerce général', 'Vie associative', 'Voyages']
 };
 
-/** Complète un contenu enregistré avec les valeurs par défaut manquantes. */
+const LIST_KEYS = ['phones', 'services', 'experiences', 'skills', 'languages', 'interests', 'audience', 'values', 'steps'];
+
+/**
+ * Complète un contenu enregistré avec les valeurs par défaut manquantes
+ * et corrige les types (une liste reste une liste, un texte reste un texte),
+ * pour qu'une donnée abîmée ne casse jamais l'affichage.
+ */
 export function withDefaults(saved) {
-  const out = { ...DEFAULT_CONTENT };
-  if (saved && typeof saved === 'object') {
-    for (const k of Object.keys(DEFAULT_CONTENT)) {
-      if (saved[k] !== undefined && saved[k] !== null) out[k] = saved[k];
-    }
+  const out = structuredClone(DEFAULT_CONTENT);
+  if (!saved || typeof saved !== 'object') return out;
+  for (const k of Object.keys(DEFAULT_CONTENT)) {
+    const v = saved[k];
+    if (v === undefined || v === null) continue;
+    if (LIST_KEYS.includes(k)) { if (Array.isArray(v)) out[k] = v.filter(x => x !== null && x !== undefined); }
+    else if (k === 'cv') { if (typeof v === 'object') out.cv = { ...out.cv, ...v }; }
+    else out[k] = String(v);
   }
+  // Ancien champ « modalités » (avant les étapes modifiables) : il devient le texte de l'étape 2.
+  if (typeof saved.modalities === 'string' && saved.modalities && !Array.isArray(saved.steps) && out.steps[1]) out.steps[1].text = saved.modalities;
+  if (typeof saved.updatedAt === 'string') out.updatedAt = saved.updatedAt;
   return out;
 }
+
+/** Contenu par défaut d'une liste de clés (bouton « Rétablir » de l'administration). */
+export const defaultsFor = keys => Object.fromEntries(keys.map(k => [k, structuredClone(DEFAULT_CONTENT[k])]));

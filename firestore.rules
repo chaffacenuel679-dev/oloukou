@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Règles de sécurité du site Prestalia.
+// Règles de sécurité du site Gbola PSD.
 // - Tout le monde peut LIRE le contenu du site (site/content et site/photo).
 // - Tout le monde peut ENVOYER un message, sans pouvoir le relire.
 // - Seul l'administrateur peut modifier le site et lire les messages.

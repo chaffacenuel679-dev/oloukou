@@ -45,6 +45,8 @@ function render(data) {
 
   const valueEmoji = t => pick(t, [[/confiance/, '🤝'], [/honnête/, '⚖️'], [/discr/, '🤫'], [/rapid/, '⚡']], '💎');
   const audienceEmoji = t => pick(t, [[/administ|occup/, '💼'], [/extérieur|étranger|diaspora|loin/, '✈️'], [/entreprise|projet|investis/, '🏢']], '👤');
+  $('#steps').innerHTML = (c.steps || []).map((st, i) => `
+    <li data-reveal style="--d:${i * 120}ms"><b>${i + 1}</b><strong>${esc(st.title)}</strong><span>${esc(st.text)}</span></li>`).join('');
   $('#audience').innerHTML = (c.audience || []).map((a, i) => `
     <article class="card who" data-reveal style="--d:${i * 120}ms"><span class="who-emo" aria-hidden="true">${audienceEmoji(a.title)}</span><h4>${esc(a.title)}</h4><p>${esc(a.text)}</p></article>`).join('');
   $('#values').innerHTML = (c.values || []).map((a, i) => `
@@ -66,8 +68,10 @@ function render(data) {
   $('#email-link').textContent = c.email;
   $('#email-link').href = `mailto:${c.email}`;
   const wa = String(c.whatsapp || '').replace(/\D/g, '');
-  $('#whatsapp').hidden = !wa;
-  if (wa) $('#whatsapp').href = `https://wa.me/${wa}`;
+  for (const a of [$('#whatsapp'), $('#wa-float')]) {
+    a.hidden = !wa;
+    if (wa) a.href = `https://wa.me/${wa}`;
+  }
 
   const sel = $('#subject'), prev = sel.value;
   sel.innerHTML = [...c.services.map(s => s.title), 'Autre demande'].map(t => `<option>${esc(t)}</option>`).join('');
@@ -87,12 +91,32 @@ fetchContent().then(data => {
   if (data && render(data)) document.dispatchEvent(new Event('content-updated'));
 });
 
-// Téléchargement du CV (le générateur PDF n'est chargé qu'au clic)
+// Menu mobile
+const menuBtn = $('.menu-btn'), nav = $('#nav');
+const setMenu = open => { nav.classList.toggle('open', open); menuBtn.setAttribute('aria-expanded', open); menuBtn.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu'); };
+menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+nav.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+// Lien du menu correspondant à la section visible
+const links = [...nav.querySelectorAll('a[href^="#"]')];
+const navIO = new IntersectionObserver(entries => entries.forEach(e => {
+  if (!e.isIntersecting) return;
+  links.forEach(a => a.classList.toggle('current', a.getAttribute('href') === '#' + e.target.id));
+}), { rootMargin: '-45% 0px -50% 0px' });
+links.forEach(a => { const sec = document.querySelector(a.getAttribute('href')); if (sec) navIO.observe(sec); });
+
+// Téléchargement du CV : le générateur PDF (≈ 800 Ko) se précharge au survol, sinon au clic.
+const preload = () => import('./cv.js').then(m => m.preloadPdf()).catch(() => {});
+document.querySelectorAll('[data-cv]').forEach(btn => {
+  btn.addEventListener('pointerenter', preload, { once: true });
+  btn.addEventListener('focus', preload, { once: true });
+});
 document.querySelectorAll('[data-cv]').forEach(btn => btn.addEventListener('click', async () => {
   const label = btn.textContent;
   btn.disabled = true; btn.textContent = '⏳ Préparation du CV…';
   try { const { downloadCv } = await import('./cv.js'); await downloadCv(c, photo); }
-  catch (e) { alert(e.message); }
+  catch (e) { console.error(e); alert('Le CV n\'a pas pu être préparé. Vérifiez votre connexion et réessayez.'); }
   finally { btn.disabled = false; btn.textContent = label; }
 }));
 

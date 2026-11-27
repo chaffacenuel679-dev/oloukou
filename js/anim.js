@@ -42,8 +42,8 @@ function start() {
   document.querySelectorAll('[data-target]').forEach(el => counterIO.observe(el));
 
   /* Pause des animations en boucle de l'accueil quand il est hors écran */
-  const hero = document.querySelector('.hero');
-  if (hero) new IntersectionObserver(([e]) => hero.classList.toggle('paused', !e.isIntersecting)).observe(hero);
+  const loopIO = new IntersectionObserver(entries => entries.forEach(e => e.target.classList.toggle('paused-loop', !e.isIntersecting)));
+  document.querySelectorAll('.hero, .travel').forEach(el => loopIO.observe(el));
 
   /* En-tête + ligne du parcours : un seul calcul par image */
   const topbar = document.querySelector('.topbar'), tl = document.querySelector('.timeline');

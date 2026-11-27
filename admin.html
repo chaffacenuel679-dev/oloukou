@@ -6,117 +6,158 @@
   <meta name="robots" content="noindex">
   <title>Administration — Gbola PSD</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-700.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/admin.css">
   <script type="module" src="js/admin.js"></script>
 </head>
-<body>
+<body class="admin-body">
   <header class="topbar">
     <div class="wrap topbar-in">
-      <a class="logo" href="index.html"><span class="logo-mark">G<i></i></span>Gbola PSD · Admin</a>
-      <div class="nav">
-        <span id="who" class="muted"></span>
-        <button id="logout" class="btn btn-outline btn-sm" hidden>Déconnexion</button>
+      <a class="logo" href="./"><span class="logo-mark">G<i></i></span>Gbola <b class="logo-psd">PSD</b><small class="logo-admin">Admin</small></a>
+      <div class="admin-top">
+        <a class="btn btn-outline btn-sm" href="./" target="_blank" rel="noopener" title="Voir le site">👁️ <span class="hide-sm">Voir le site</span></a>
+        <span id="who" class="who-mail muted"></span>
+        <button id="logout" class="btn btn-outline btn-sm" type="button" hidden title="Se déconnecter">🚪 <span class="hide-sm">Déconnexion</span></button>
       </div>
     </div>
   </header>
 
   <main class="wrap admin">
-    <p id="notice" class="notice" hidden></p>
+    <p id="notice" class="notice" role="alert" hidden></p>
 
     <section id="login" class="card login" hidden>
       <h1 class="h2">Espace administrateur</h1>
-      <p>🔐 Connectez-vous avec le compte Google autorisé pour modifier le site.</p>
-      <p class="hint">💡 Utilisez le compte <b>oloukoulau@gmail.com</b>. Si rien ne s'ouvre, autorisez les fenêtres pop-up pour ce site, ou réessayez : la connexion passera par une redirection.</p>
-      <button id="login-btn" class="btn btn-red">🔑 Se connecter avec Google</button>
+      <p>🔐 Connectez-vous avec un compte Google autorisé pour modifier le site.</p>
+      <button id="login-btn" class="btn btn-red" type="button">🔑 Se connecter avec Google</button>
+      <p class="hint">💡 Si rien ne s'ouvre, autorisez les fenêtres pop-up pour ce site, puis réessayez.</p>
     </section>
 
-    <div id="app" hidden>
-      <p class="hint">👋 Bienvenue ! Choisissez un onglet, modifiez les textes, puis cliquez sur <b>💾 Enregistrer</b> en bas de l'écran. Les changements apparaissent aussitôt sur le site et dans le CV.</p>
-      <nav class="tabs" role="tablist">
-        <button data-tab="profil" class="active">👤 Profil & contact</button>
-        <button data-tab="psd">🤝 Gbola PSD</button>
-        <button data-tab="services">🧰 Services</button>
-        <button data-tab="parcours">🧭 Parcours</button>
-        <button data-tab="atouts">🛠️ Compétences & langues</button>
-        <button data-tab="messages">📬 Messages <span id="unread" class="badge" hidden></span></button>
+    <div id="app" class="admin-app" hidden>
+      <nav class="tabs" role="tablist" aria-label="Rubriques">
+        <button type="button" role="tab" data-tab="profil" aria-selected="true">👤 <span>Profil & contact</span></button>
+        <button type="button" role="tab" data-tab="psd">🤝 <span>Gbola PSD</span></button>
+        <button type="button" role="tab" data-tab="services">🧰 <span>Services</span></button>
+        <button type="button" role="tab" data-tab="parcours">🧭 <span>Parcours</span></button>
+        <button type="button" role="tab" data-tab="atouts">🛠️ <span>Compétences & langues</span></button>
+        <button type="button" role="tab" data-tab="cv">📄 <span>CV</span></button>
+        <button type="button" role="tab" data-tab="messages">📬 <span>Messages</span> <b id="unread" class="badge" hidden></b></button>
       </nav>
 
-      <form id="editor">
-        <section data-panel="profil" class="panel card">
-          <h2>📷 Photo</h2>
-          <p class="hint">💡 Choisissez une photo nette, de face, avec un fond simple. Elle est réduite automatiquement. Pensez à <b>Enregistrer</b> après l'avoir changée.</p>
+      <form id="editor" novalidate>
+        <!-- ============ PROFIL ============ -->
+        <section data-panel="profil" class="panel card" role="tabpanel">
+          <div class="panel-head"><h2>👤 Profil & contact</h2></div>
+          <h3>📷 Photo</h3>
           <div class="photo-row">
-            <img id="photo-preview" src="assets/photo.jpg" alt="Photo actuelle" width="120" height="144">
-            <div><p class="muted" style="margin:0 0 8px">Cette photo est utilisée sur le site et sur le CV.</p><label class="btn btn-outline btn-sm">📷 Changer la photo<input id="photo-input" type="file" accept="image/*" hidden></label></div>
+            <img id="photo-preview" src="assets/photo.jpg" alt="Photo actuelle" width="120" height="120">
+            <div>
+              <p class="muted">Utilisée sur le site et sur le CV. Choisissez une photo nette, de face (JPG ou PNG).</p>
+              <label class="btn btn-outline btn-sm file-btn">📷 Changer la photo<input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            </div>
           </div>
-          <h2>🪪 Identité</h2>
-          <label>Nom<input name="name"></label>
-          <label>Métier / accroche principale<input name="title"></label>
-          <label>Phrase d'accueil<input name="tagline"></label>
-          <label>Déplacements (phrase affichée dans « Services »)<input name="travel"></label>
-          <label>Naissance / origine<input name="birth"></label>
-          <label>Présentation<textarea name="about" rows="6"></textarea></label>
-          <h2>📞 Contact</h2>
-          <p class="hint">💡 Écrivez les téléphones sans le +229 (ex. 0197900204), un par ligne. Pour WhatsApp, mettez le numéro complet avec l'indicatif, sans espace.</p>
-          <label>Adresse<input name="address"></label>
-          <label>Téléphones (un par ligne)<textarea name="phones" rows="3"></textarea></label>
-          <label>Email<input name="email" type="email"></label>
-          <label>Numéro WhatsApp (avec indicatif, ex. 2290197900204)<input name="whatsapp"></label>
+          <h3>🪪 Accueil du site</h3>
+          <label>Nom<input name="name" required maxlength="80"></label>
+          <label>Petite ligne au-dessus du nom<input name="eyebrow" maxlength="120"></label>
+          <label>Accroche (sous le nom)<input name="title" maxlength="160"></label>
+          <label>Slogan<input name="tagline" maxlength="160"></label>
+          <h3>📝 À propos</h3>
+          <label>Présentation<textarea name="about" rows="6" maxlength="2000"></textarea></label>
+          <label>Naissance / origine<input name="birth" maxlength="160"></label>
+          <h3>📞 Contact</h3>
+          <label>Phrase d'introduction du contact<input name="contactIntro" maxlength="200"></label>
+          <label>Adresse<input name="address" maxlength="160"></label>
+          <label>Téléphones <small>(un par ligne, sans le +229, ex. 0197900204)</small><textarea name="phones" rows="3"></textarea></label>
+          <div class="row2">
+            <label>Email<input name="email" type="email" maxlength="200"></label>
+            <label>WhatsApp <small>(avec indicatif, ex. 2290197900204)</small><input name="whatsapp" inputmode="numeric" maxlength="20"></label>
+          </div>
         </section>
 
-        <section data-panel="psd" class="panel card" hidden>
-          <h2>🤝 Présentation de Gbola PSD</h2>
-          <p class="hint">💡 Ces textes s'affichent dans la section « Gbola PSD, c'est quoi ? » du site.</p>
-          <label>Présentation de l'offre<textarea name="offer" rows="4"></textarea></label>
-          <label>Modalités (étape 2 « Nous convenons des modalités »)<textarea name="modalities" rows="2"></textarea></label>
-          <h2>👥 Pour qui ?</h2>
-          <p class="hint">💡 Une ligne par type de client, au format « Titre — description ».</p>
-          <label>Clients visés<textarea name="audience" rows="5"></textarea></label>
-          <h2>💎 Engagements</h2>
-          <p class="hint">💡 Une ligne par engagement, au format « Titre — description ».</p>
-          <label>Engagements<textarea name="engagements" rows="5"></textarea></label>
+        <!-- ============ GBOLA PSD ============ -->
+        <section data-panel="psd" class="panel card" role="tabpanel" hidden>
+          <div class="panel-head"><h2>🤝 Gbola PSD</h2><button type="button" class="reset" data-reset="offer,audience,steps,values">↺ Textes par défaut</button></div>
+          <label>Présentation de l'offre<textarea name="offer" rows="4" maxlength="1000"></textarea></label>
+          <h3>👥 Pour qui ?</h3>
+          <div class="items" data-list="audience"></div>
+          <button type="button" class="btn btn-outline btn-sm" data-add="audience">➕ Ajouter un type de client</button>
+          <h3>⚙️ Comment ça marche ? <small>(étapes)</small></h3>
+          <div class="items" data-list="steps"></div>
+          <button type="button" class="btn btn-outline btn-sm" data-add="steps">➕ Ajouter une étape</button>
+          <h3>💎 Engagements</h3>
+          <div class="items" data-list="values"></div>
+          <button type="button" class="btn btn-outline btn-sm" data-add="values">➕ Ajouter un engagement</button>
         </section>
 
-        <section data-panel="services" class="panel card" hidden>
-          <h2>🧰 Services proposés</h2>
-          <p class="hint">💡 Un titre court et une description de 1 à 2 phrases. Un emoji est choisi automatiquement selon le titre (📦 stock, 📊 projet, 🛒 commerce…). Utilisez ↑ ↓ pour changer l'ordre.</p>
-          <div id="services-ed" class="items"></div>
+        <!-- ============ SERVICES ============ -->
+        <section data-panel="services" class="panel card" role="tabpanel" hidden>
+          <div class="panel-head"><h2>🧰 Services</h2><button type="button" class="reset" data-reset="servicesIntro,services,travelTitle,travel">↺ Textes par défaut</button></div>
+          <label>Phrase sous le titre « Mes services »<input name="servicesIntro" maxlength="200"></label>
+          <p class="hint">💡 L'emoji de chaque service est choisi d'après son titre (🏗️ chantier, 🗂️ démarche, 🤝 partenaire, 🏡 foncier, 📦 stock, 📊 projet…).</p>
+          <div class="items" data-list="services"></div>
           <button type="button" class="btn btn-outline btn-sm" data-add="services">➕ Ajouter un service</button>
+          <h3>🚗 Bandeau « déplacements »</h3>
+          <label>Titre<input name="travelTitle" maxlength="80"></label>
+          <label>Texte<input name="travel" maxlength="200"></label>
         </section>
 
-        <section data-panel="parcours" class="panel card" hidden>
-          <h2>💼 Expériences (de la plus récente à la plus ancienne)</h2>
-          <p class="hint">💡 Cliquez sur <b>➕ Ajouter une expérience</b> : un bloc vide apparaît en haut. Remplissez la période sous la forme « 2015 – 2018 ». Une tâche par ligne. Cochez « seulement dans le CV » pour la cacher sur le site.</p>
-          <div id="experiences-ed" class="items"></div>
-          <button type="button" class="btn btn-outline btn-sm" data-add="experiences">➕ Ajouter une expérience (en haut de la liste)</button>
+        <!-- ============ PARCOURS ============ -->
+        <section data-panel="parcours" class="panel card" role="tabpanel" hidden>
+          <div class="panel-head"><h2>🧭 Parcours</h2><button type="button" class="reset" data-reset="experiences">↺ Parcours du CV d'origine</button></div>
+          <p class="hint">💡 De la plus récente à la plus ancienne. Période au format « 2015 – 2018 ». Choisissez où chaque expérience apparaît : site, CV, ou les deux.</p>
+          <button type="button" class="btn btn-outline btn-sm" data-add="experiences">➕ Ajouter une expérience (en haut)</button>
+          <div class="items" data-list="experiences"></div>
         </section>
 
-        <section data-panel="atouts" class="panel card" hidden>
-          <p class="hint">💡 Une ligne = un élément. Pour les langues, le niveau donne les étoiles sur le site et les points sur le CV : Excellent ★★★★★, Bien ★★★★, Assez bien ★★★, Moyen ★★, Notions ★.</p>
-          <h2>🛠️ Compétences</h2>
-          <label>Une compétence par ligne<textarea name="skills" rows="8"></textarea></label>
-          <h2>🌍 Langues</h2>
-          <label>Une langue par ligne, au format « Langue — Niveau »<textarea name="languages" rows="6"></textarea></label>
-          <h2>⭐ Centres d'intérêt</h2>
+        <!-- ============ COMPÉTENCES ============ -->
+        <section data-panel="atouts" class="panel card" role="tabpanel" hidden>
+          <div class="panel-head"><h2>🛠️ Compétences & langues</h2><button type="button" class="reset" data-reset="skills,languages,interests">↺ Valeurs du CV d'origine</button></div>
+          <label>Compétences <small>(une par ligne)</small><textarea name="skills" rows="7"></textarea></label>
+          <h3>🌍 Langues</h3>
+          <div class="items" data-list="languages"></div>
+          <button type="button" class="btn btn-outline btn-sm" data-add="languages">➕ Ajouter une langue</button>
+          <h3>⭐ Centres d'intérêt</h3>
           <label>Un par ligne<textarea name="interests" rows="5"></textarea></label>
         </section>
 
-        <section data-panel="messages" class="panel card" hidden>
-          <h2>📬 Messages reçus</h2>
-          <p class="hint">💡 Les nouveaux messages ont une bordure rouge. Cliquez sur l'email ou le téléphone pour répondre directement, puis sur <b>Marquer comme lu</b>.</p>
+        <!-- ============ CV ============ -->
+        <section data-panel="cv" class="panel card" role="tabpanel" hidden>
+          <div class="panel-head"><h2>📄 CV</h2><button type="button" class="reset" data-reset="cv">↺ Réglages par défaut</button></div>
+          <p class="hint">💡 Le CV est fabriqué automatiquement à partir du contenu du site : nom, photo, contact, parcours, compétences, langues… Il n'y a <b>aucun fichier à envoyer</b>. Dès que vous enregistrez, les visiteurs téléchargent la nouvelle version.</p>
+          <label>Ligne sous le nom<input name="cv.headline" maxlength="160"></label>
+          <label>Profil du CV <small>(laissez vide pour reprendre la présentation du site)</small><textarea name="cv.summary" rows="4" maxlength="1500"></textarea></label>
+          <fieldset class="checks">
+            <legend>Afficher sur le CV</legend>
+            <label class="check"><input type="checkbox" name="cv.photo"> La photo</label>
+            <label class="check"><input type="checkbox" name="cv.services"> La liste des services Gbola PSD</label>
+            <label class="check"><input type="checkbox" name="cv.interests"> Les centres d'intérêt</label>
+          </fieldset>
+          <p class="muted">Pour cacher une expérience du CV, ouvrez l'onglet 🧭 Parcours.</p>
+          <div class="cv-actions">
+            <button type="button" class="btn btn-outline btn-sm" id="cv-refresh">🔄 Aperçu du CV</button>
+            <button type="button" class="btn btn-outline btn-sm" data-cv-download>⬇️ Télécharger le PDF</button>
+          </div>
+          <div class="cv-frame" id="cv-frame" hidden><iframe title="Aperçu du CV"></iframe></div>
+        </section>
+
+        <!-- ============ MESSAGES ============ -->
+        <section data-panel="messages" class="panel card" role="tabpanel" hidden>
+          <div class="panel-head"><h2>📬 Messages reçus</h2><button type="button" class="reset" id="msg-refresh">🔄 Actualiser</button></div>
           <div id="messages"></div>
         </section>
 
         <div class="savebar">
-          <button type="button" id="cv-preview" class="btn btn-outline">📄 Télécharger le CV à jour</button>
-          <button type="submit" class="btn btn-red">💾 Enregistrer les modifications</button>
-          <span id="save-status" role="status"></span>
+          <span id="dirty" class="dirty" hidden>● Modifications non enregistrées</span>
+          <button type="button" class="btn btn-outline btn-sm" data-cv-download>📄 CV à jour</button>
+          <button type="submit" class="btn btn-red" id="save-btn">💾 Enregistrer</button>
         </div>
       </form>
     </div>
   </main>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
 </body>
 </html>

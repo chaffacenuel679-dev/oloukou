@@ -1,39 +1,59 @@
 # Gbola PSD — site de Laurent OLOUKOU
 
-Site vitrine pour promouvoir les prestations de services de Laurent OLOUKOU
-(gestion de stocks, logistique, gestion administrative, suivi de projets, conseil).
-HTML / CSS / JavaScript sans framework, relié à **Firebase** pour l'administration.
+Site de **Gbola PSD (Prestation de Services à Distance)** : suivi de chantier, courses administratives,
+recherche de partenaires d'affaires, sécurisation foncière…
+HTML / CSS / JavaScript sans framework, relié à **Firebase** (Firestore + connexion Google).
+En ligne : https://oloukou-laurent-prestation.vercel.app — administration : `/admin`.
+
+## Tout se gère depuis l'administration
+
+| Onglet | Ce qu'on y modifie |
+|---|---|
+| 👤 Profil & contact | Photo, nom, textes de l'accueil, présentation, téléphones, email, WhatsApp |
+| 🤝 Gbola PSD | Présentation de l'offre, « Pour qui ? », étapes, engagements |
+| 🧰 Services | Liste des services, bandeau « déplacements » |
+| 🧭 Parcours | Expériences, et où chacune s'affiche (site, CV ou les deux) |
+| 🛠️ Compétences & langues | Compétences, langues (niveau → étoiles/points), centres d'intérêt |
+| 📄 CV | Ligne sous le nom, profil, éléments affichés, aperçu et téléchargement |
+| 📬 Messages | Messages du formulaire de contact |
+
+Chaque onglet a un bouton **↺** pour remettre les textes par défaut (`js/content.js`).
+Raccourci : **Ctrl + S** pour enregistrer.
+
+## Le CV
+
+Le CV PDF n'est **pas un fichier stocké** : il est fabriqué dans le navigateur (pdfmake) à partir du
+contenu enregistré dans Firestore, au moment du téléchargement. Il est donc toujours identique au site.
+Son pied de page indique la date du dernier enregistrement.
 
 ## Fichiers
 
 ```
-index.html           Site public : services, à propos, parcours, contact, CV
-admin.html           Espace admin : profil, photo, services, parcours, compétences, messages
-css/style.css        Styles du site (couleurs claires : bleu, blanc, vert, rouge)
-css/admin.css        Styles de l'administration
-js/content.js        Contenu par défaut (tiré du CV)
-js/data.js           Lecture du contenu (Firebase ou contenu par défaut)
-js/main.js           Logique du site public
-js/admin.js          Logique de l'administration
-js/cv.js             Génération du CV en PDF (pdfmake), toujours à jour
-js/firebase*.js      Configuration et chargement de Firebase
-firestore.rules      Règles de sécurité
+index.html / admin.html   Site public / administration
+css/style.css, admin.css  Styles
+js/content.js             Contenu par défaut + normalisation des données
+js/data.js                Lecture Firestore + cache local (affichage immédiat)
+js/main.js, anim.js       Site public, animations
+js/admin.js               Administration
+js/cv.js                  Génération du CV (pdfmake, polices Manrope + Noto Emoji)
+js/firebase*.js           Configuration et chargement de Firebase
+firestore.rules           Règles de sécurité (liste des comptes administrateurs)
 ```
 
 ## Tester en local
 
 ```bash
-python3 -m http.server 8000
-# puis http://localhost:8000 et http://localhost:8000/admin.html
+python3 -m http.server 8000          # puis http://localhost:8000
 ```
 
-Sans configuration Firebase, le site affiche le contenu par défaut et l'admin
-fonctionne en **mode démo** (rien n'est enregistré).
+Avec les émulateurs Firebase (aucune donnée réelle touchée) :
 
-## Mise en ligne (projet Firebase du client)
+```bash
+npx firebase-tools emulators:start --only auth,firestore --project prestalia-oloukou
+# puis http://localhost:8000/?emu et http://localhost:8000/admin.html?emu
+```
 
-1. Créer un projet sur https://console.firebase.google.com (au nom du client).
-2. Activer **Firestore** et **Authentication → Google**.
-3. Ajouter une application Web et coller sa configuration dans `js/firebase-config.js`.
-4. Vérifier l'email admin dans `js/firebase-config.js` **et** `firestore.rules`.
-5. `firebase deploy --only firestore:rules,hosting`
+## Administrateurs
+
+Liste dans `js/firebase-config.js` (`ADMIN_EMAILS`) **et** dans `firestore.rules` (`isAdmin`).
+Après modification des règles : les republier dans la console Firebase (Firestore → Règles).

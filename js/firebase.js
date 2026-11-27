@@ -2,6 +2,8 @@
 import { firebaseConfig, ADMIN_EMAIL, ADMIN_EMAILS } from './firebase-config.js';
 
 const CDN = 'https://www.gstatic.com/firebasejs/12.19.0';
+// Tests en local uniquement : http://localhost:8000/?emu relie le site aux émulateurs Firebase.
+const EMU = ['localhost', '127.0.0.1'].includes(location.hostname) && new URLSearchParams(location.search).has('emu');
 export const isConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
 export { ADMIN_EMAIL, ADMIN_EMAILS };
 
@@ -15,7 +17,11 @@ const getApp = () => (appP ??= import(`${CDN}/firebase-app.js`)
 export function getDb() {
   if (!isConfigured) return Promise.reject(new Error('Firebase non configuré'));
   return (fsP ??= Promise.all([getApp(), import(`${CDN}/firebase-firestore-lite.js`)])
-    .then(([app, fs]) => ({ db: fs.getFirestore(app), fs }))
+    .then(([app, fs]) => {
+      const db = fs.getFirestore(app);
+      if (EMU) fs.connectFirestoreEmulator(db, '127.0.0.1', 8080);
+      return { db, fs };
+    })
     .catch(e => { fsP = null; throw e; }));
 }
 
@@ -23,6 +29,7 @@ export function getDb() {
 export function getAuth() {
   return (authP ??= Promise.all([getApp(), import(`${CDN}/firebase-auth.js`)]).then(([app, authMod]) => {
     const auth = authMod.getAuth(app);
+    if (EMU) authMod.connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
     auth.languageCode = 'fr';
     return { auth, authMod };
   }).catch(e => { authP = null; throw e; }));

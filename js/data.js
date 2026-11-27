@@ -5,7 +5,7 @@ import { DEFAULT_CONTENT, withDefaults } from './content.js';
 import { isConfigured, getDb, safeImage } from './firebase.js';
 
 export const DEFAULT_PHOTO = 'assets/photo.jpg';
-const CACHE_KEY = 'prestalia-content-v1';
+const CACHE_KEY = 'gbola-psd-content-v2';
 const TIMEOUT_MS = 8000;
 
 const defaults = () => ({ content: structuredClone(DEFAULT_CONTENT), photo: DEFAULT_PHOTO });
@@ -40,8 +40,11 @@ export async function fetchContent() {
       fs.getDoc(fs.doc(db, 'site', 'content')),
       fs.getDoc(fs.doc(db, 'site', 'photo'))
     ]), TIMEOUT_MS);
+    const raw = c.exists() ? c.data() : null;
+    // Date de dernière mise à jour (affichée en bas du CV), convertie en texte pour le cache.
+    if (raw?.updatedAt?.toDate) raw.updatedAt = raw.updatedAt.toDate().toISOString();
     const data = {
-      content: withDefaults(c.exists() ? c.data() : null),
+      content: withDefaults(raw),
       photo: (p.exists() && safeImage(p.data().data)) || DEFAULT_PHOTO
     };
     saveCache(data);

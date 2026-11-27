@@ -71,10 +71,16 @@ function levelDots(level) {
   return { canvas: [0, 1, 2, 3, 4].map(i => ({ type: 'ellipse', x: 4 + i * 11, y: 4, r1: 3.6, r2: 3.6, color: i < n ? AMBER : NAVY_2 })), width: 56 };
 }
 
+const SITE = 'oloukou-laurent-prestation.vercel.app';
+const dateFr = iso => { const d = iso ? new Date(iso) : new Date(); return isNaN(d) ? '' : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); };
+
 function definition(c, photo) {
+  const o = { photo: true, services: true, interests: true, headline: '', summary: '', ...(c.cv || {}) };
   const wa = String(c.whatsapp || '').replace(/\D/g, '');
+  const summary = (o.summary || '').trim() || c.about;
+  const exps = (c.experiences || []).filter(e => !e.hideCv);
   const side = [
-    photo ? { image: photo, width: 118, alignment: 'center', margin: [0, 0, 0, 4] } : '',
+    photo && o.photo ? { image: photo, width: 118, alignment: 'center', margin: [0, 0, 0, 4] } : '',
     ...sideTitle('📌', 'Contact'),
     contactLine('📍', c.address),
     contactLine('📞', (c.phones || []).join(' / ')),
@@ -84,18 +90,24 @@ function definition(c, photo) {
       ...c.skills.map(s => ({ text: [{ text: '•  ', color: AMBER, bold: true }, s], fontSize: 8.8, color: ON_NAVY, margin: [0, 0, 0, 3] }))] : []),
     ...(c.languages?.length ? [...sideTitle('🌍', 'Langues'),
       ...c.languages.map(l => ({ columns: [{ text: l.name, bold: true, fontSize: 8.8, color: '#fff', width: '*' }, levelDots(l.level)], margin: [0, 0, 0, 2] }))] : []),
-    ...(c.interests?.length ? [...sideTitle('⭐', "Centres d'intérêt"),
+    ...(o.interests && c.interests?.length ? [...sideTitle('⭐', "Centres d'intérêt"),
       { text: c.interests.join('  •  '), fontSize: 8.6, color: ON_NAVY, lineHeight: 1.3 }] : [])
   ];
 
   const main = [
     { text: c.name, fontSize: 24, bold: true, color: NAVY, characterSpacing: .3 },
     { canvas: [{ type: 'rect', x: 0, y: 0, w: 60, h: 4, r: 2, color: AMBER }], margin: [0, 6, 0, 6] },
-    { text: 'Fondateur de Gbola PSD — Prestation de Services à Distance', bold: true, color: NAVY, fontSize: 10.5, margin: [0, 0, 0, 3] },
+    o.headline ? { text: o.headline, bold: true, color: NAVY, fontSize: 10.5, margin: [0, 0, 0, 3] } : '',
     c.birth ? { text: [...emo('🎂', MUTED), c.birth], color: MUTED, fontSize: 9.5 } : '',
-    ...(c.about ? [mainTitle('👤', 'Profil'), { text: c.about, fontSize: 9.5, lineHeight: 1.3, alignment: 'justify' }] : []),
-    ...(c.experiences?.length ? [mainTitle('💼', 'Expérience professionnelle'),
-      ...c.experiences.map(e => ({
+    ...(summary ? [mainTitle('👤', 'Profil'), { text: summary, fontSize: 9.5, lineHeight: 1.3, alignment: 'justify' }] : []),
+    ...(o.services && c.services?.length ? [mainTitle('🎯', 'Services proposés'), {
+      columns: [0, 1].map(col => ({
+        ul: c.services.filter((_, i) => i % 2 === col).map(sv => ({ text: sv.title, bold: true })),
+        fontSize: 8.9, markerColor: AMBER, color: INK, lineHeight: 1.2
+      })), columnGap: 12
+    }] : []),
+    ...(exps.length ? [mainTitle('💼', 'Expérience professionnelle'),
+      ...exps.map(e => ({
         unbreakable: (e.tasks || []).length < 6,
         margin: [0, 0, 0, 9],
         stack: [
@@ -112,6 +124,14 @@ function definition(c, photo) {
     pageMargins: [0, 34, 30, 34],
     defaultStyle: { font: 'Manrope', color: INK },
     info: { title: `CV — ${c.name}`, author: c.name },
+    // Pied de page : date de la dernière mise à jour + site, sur chaque page
+    footer: (page, pages) => ({
+      columns: [
+        { text: `Mis à jour le ${dateFr(c.updatedAt)}  ·  ${SITE}`, color: MUTED, fontSize: 7.5 },
+        { text: pages > 1 ? `${page} / ${pages}` : '', alignment: 'right', color: MUTED, fontSize: 7.5, width: 40 }
+      ],
+      margin: [SIDE_W + 26, 10, 30, 0]
+    }),
     // Colonne bleu nuit sur chaque page + fine bande ambre en haut
     background: () => ({ svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${PAGE_W}" height="${PAGE_H}"><rect width="${SIDE_W}" height="${PAGE_H}" fill="${NAVY}"/><rect x="${SIDE_W}" width="${PAGE_W - SIDE_W}" height="6" fill="${AMBER}"/></svg>` }),
     content: [{
@@ -131,7 +151,7 @@ export async function downloadCv(content, photoSrc) {
   const pdfMake = await loadPdfMake();
   let photo = null;
   try { photo = await roundPhoto(photoSrc); } catch { /* CV sans photo */ }
-  const file = `CV-${content.name.replace(/\s+/g, '-')}.pdf`;
+  const file = `CV-${String(content.name || 'Laurent-OLOUKOU').trim().replace(/\s+/g, '-')}.pdf`;
   await pdfMake.createPdf(definition(content, photo)).download(file);
 }
 
